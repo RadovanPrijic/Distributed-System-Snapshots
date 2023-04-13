@@ -4,7 +4,6 @@ import app.AppConfig;
 import app.snapshot_bitcake.BitcakeManager;
 import app.snapshot_bitcake.ab.ABBitcakeManager;
 import app.snapshot_bitcake.av.AVBitcakeManager;
-import app.snapshot_bitcake.ly.LaiYangBitcakeManager;
 import servent.message.Message;
 import servent.message.MessageType;
 

@@ -6,7 +6,6 @@ import app.snapshot_bitcake.BitcakeManager;
 import app.snapshot_bitcake.SnapshotCollector;
 import servent.message.Message;
 import servent.message.snapshot.ab.ABTellMessage;
-import servent.message.snapshot.TokenMessage;
 import servent.message.snapshot.ab.ABTokenMessage;
 import servent.message.util.MessageUtil;
 

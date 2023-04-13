@@ -15,7 +15,6 @@ import cli.command.PingCommand;
 import cli.command.StopCommand;
 import cli.command.TransactionBurstCommand;
 import servent.SimpleServentListener;
-import servent.message.util.FifoSendWorker;
 
 /**
  * A simple CLI parser. Each command has a name and arbitrary arguments.
@@ -41,8 +40,7 @@ public class CLIParser implements Runnable, Cancellable {
 
 	private final List<CLICommand> commandList;
 
-	public CLIParser(SimpleServentListener listener, List<FifoSendWorker> senderThreads,
-			SnapshotCollector snapshotCollector) {
+	public CLIParser(SimpleServentListener listener, SnapshotCollector snapshotCollector) {
 		this.commandList = new ArrayList<>();
 
 		commandList.add(new InfoCommand());
@@ -50,7 +48,7 @@ public class CLIParser implements Runnable, Cancellable {
 		commandList.add(new PingCommand());
 		commandList.add(new TransactionBurstCommand(snapshotCollector.getBitcakeManager()));
 		commandList.add(new BitcakeInfoCommand(snapshotCollector));
-		commandList.add(new StopCommand(this, listener, senderThreads, snapshotCollector));
+		commandList.add(new StopCommand(this, listener, snapshotCollector));
 	}
 
 	@Override

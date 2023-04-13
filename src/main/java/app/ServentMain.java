@@ -1,16 +1,11 @@
 package app;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import app.snapshot_bitcake.NullSnapshotCollector;
 import app.snapshot_bitcake.SnapshotCollector;
 import app.snapshot_bitcake.SnapshotCollectorWorker;
 import app.snapshot_bitcake.SnapshotType;
 import cli.CLIParser;
 import servent.SimpleServentListener;
-import servent.message.util.FifoSendWorker;
-import servent.message.util.MessageUtil;
 
 /**
  * Describes the procedure for starting a single Servent
@@ -60,9 +55,7 @@ public class ServentMain {
 			AppConfig.timestampedErrorPrint("Port number should be in range 1000-2000. Exiting...");
 			System.exit(0);
 		}
-		
-		MessageUtil.initializePendingMessages();
-		
+
 		AppConfig.timestampedStandardPrint("Starting servent " + AppConfig.myServentInfo);
 		
 		SnapshotCollector snapshotCollector;
@@ -79,21 +72,7 @@ public class ServentMain {
 		Thread listenerThread = new Thread(simpleListener);
 		listenerThread.start();
 		
-		List<FifoSendWorker> senderWorkers = new ArrayList<>();
-		if (AppConfig.IS_FIFO) {
-			for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
-				FifoSendWorker senderWorker = new FifoSendWorker(neighbor);
-				
-				Thread senderThread = new Thread(senderWorker);
-				
-				senderThread.start();
-				
-				senderWorkers.add(senderWorker);
-			}
-			
-		}
-		
-		CLIParser cliParser = new CLIParser(simpleListener, senderWorkers, snapshotCollector);
+		CLIParser cliParser = new CLIParser(simpleListener, snapshotCollector);
 		Thread cliThread = new Thread(cliParser);
 		cliThread.start();
 		

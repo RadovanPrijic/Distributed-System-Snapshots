@@ -54,15 +54,15 @@ public class DelayedMessageSender implements Runnable {
 			//if (AppConfig.isWhite.get() == false) {
 			//	messageToSend = messageToSend.setRedColor();
 			//}
+			synchronized (AppConfig.paranoidLock){
+				Socket sendSocket = new Socket(receiverInfo.getIpAddress(), receiverInfo.getListenerPort());
+				ObjectOutputStream oos = new ObjectOutputStream(sendSocket.getOutputStream());
+				oos.writeObject(messageToSend);
+				oos.flush();
 
-			Socket sendSocket = new Socket(receiverInfo.getIpAddress(), receiverInfo.getListenerPort());
-			ObjectOutputStream oos = new ObjectOutputStream(sendSocket.getOutputStream());
-			oos.writeObject(messageToSend);
-			oos.flush();
-				
-			sendSocket.close();
-			messageToSend.sendEffect();
-
+				sendSocket.close();
+				messageToSend.sendEffect();
+			}
 			//}
 		} catch (IOException e) {
 			AppConfig.timestampedErrorPrint("Couldn't send message: " + messageToSend.toString());
