@@ -1,9 +1,12 @@
 package app;
 
 import app.snapshot_bitcake.SnapshotCollector;
+import servent.handler.MessageHandler;
+import servent.handler.NullHandler;
 import servent.handler.TransactionHandler;
 import servent.handler.snapshot.ab.ABTellHandler;
 import servent.handler.snapshot.ab.ABTokenHandler;
+import servent.message.BasicMessage;
 import servent.message.Message;
 import servent.message.TransactionMessage;
 import servent.message.snapshot.ab.ABTellMessage;
@@ -29,7 +32,7 @@ import java.util.function.BiFunction;
  */
 public class CausalBroadcastShared {
     private static Map<Integer, Integer> vectorClock = new ConcurrentHashMap<>();
-    //private static List<Message> commitedCausalMessageList = new CopyOnWriteArrayList<>();
+    private static List<Message> commitedCausalMessageList = new CopyOnWriteArrayList<>();
     private static Queue<Message> pendingMessages = new ConcurrentLinkedQueue<>();
     private static Object pendingMessagesLock = new Object();
     private static final ExecutorService handlerThreadPool = Executors.newWorkStealingPool();
@@ -58,6 +61,20 @@ public class CausalBroadcastShared {
         pendingMessages.add(msg);
     }
 
+    public static List<Message> getCommitedCausalMessages() {
+        List<Message> toReturn = new CopyOnWriteArrayList<>(commitedCausalMessageList);
+
+        return toReturn;
+    }
+
+    public static void commitCausalMessage(Message newMessage, SnapshotCollector snapshotCollector) {
+        AppConfig.timestampedStandardPrint("Committing " + newMessage);
+        commitedCausalMessageList.add(newMessage);
+        incrementClock(newMessage.getOriginalSenderInfo().getId());
+
+        checkPendingMessages(snapshotCollector);
+    }
+
     private static boolean otherClockGreater(Map<Integer, Integer> clock1, Map<Integer, Integer> clock2) {
         if (clock1.size() != clock2.size()) {
             throw new IllegalArgumentException("Clocks are not same size how why");
@@ -84,39 +101,43 @@ public class CausalBroadcastShared {
 
                 while (iterator.hasNext()) {
                     Message pendingMessage = iterator.next();
+                    //BasicMessage messageToCheck = (BasicMessage)pendingMessage;
 
                     if (!otherClockGreater(myVectorClock, pendingMessage.getSenderVectorClock())) {
                         gotWork = true;
+                        MessageHandler messageHandler = new NullHandler(pendingMessage);
+
+                        commitedCausalMessageList.add(pendingMessage);
+                        incrementClock(pendingMessage.getOriginalSenderInfo().getId());
 
                         switch (pendingMessage.getMessageType()) {
                             case TRANSACTION:
-                                incrementClock(pendingMessage.getOriginalSenderInfo().getId());
-                                if(((TransactionMessage)pendingMessage).getOriginalReceiver() == AppConfig.myServentInfo.getId())
-                                    handlerThreadPool.submit(new TransactionHandler(pendingMessage, snapshotCollector.getBitcakeManager()));
+                                if(pendingMessage.getOriginalReceiverInfo().getId() == AppConfig.myServentInfo.getId()){
+                                    System.out.println("Got message " + pendingMessage.getMessageId() + " from " + pendingMessage.getOriginalSenderInfo());
+                                    messageHandler = new TransactionHandler(pendingMessage, snapshotCollector.getBitcakeManager());
+                                }
                                 break;
                             case AB_TOKEN:
-                                incrementClock(pendingMessage.getOriginalSenderInfo().getId());
-                                handlerThreadPool.submit(new ABTokenHandler(pendingMessage, snapshotCollector.getBitcakeManager(), snapshotCollector));
+                                messageHandler = new ABTokenHandler(pendingMessage, snapshotCollector.getBitcakeManager(), snapshotCollector);
                                 break;
                             case AB_TELL:
-                                incrementClock(pendingMessage.getOriginalSenderInfo().getId());
-                                if(((ABTellMessage)pendingMessage).getCollectorId() == AppConfig.myServentInfo.getId())
-                                    handlerThreadPool.submit(new ABTellHandler(pendingMessage, snapshotCollector));
+                                if(pendingMessage.getOriginalReceiverInfo().getId() == AppConfig.myServentInfo.getId())
+                                    messageHandler = new ABTellHandler(pendingMessage, snapshotCollector);
                                 break;
+                                /*
                             case AV_TOKEN:
-                                incrementClock(pendingMessage.getOriginalSenderInfo().getId());
                                 //handlerThreadPool.submit(new AVTokenHandler(pendingMessage, snapshotCollector.getBitcakeManager()));
                                 break;
                             case AV_DONE:
-                                incrementClock(pendingMessage.getOriginalSenderInfo().getId());
                                 //if(((DoneMessage)pendingMessage).getInitiatorID() == AppConfig.myServentInfo.getId())
                                 //handlerThreadPool.submit(new AVDoneHandler(pendingMessage, snapshotCollector));
                                 break;
                             case AV_TERMINATE:
-                                incrementClock(pendingMessage.getOriginalSenderInfo().getId());
                                 //handlerThreadPool.submit(new AVTerminateHandler(pendingMessage, snapshotCollector));
                                 break;
+                                 */
                         }
+                        handlerThreadPool.submit(messageHandler);
                         iterator.remove();
                         break;
                     }

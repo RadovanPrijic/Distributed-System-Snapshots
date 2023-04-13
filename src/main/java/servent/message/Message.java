@@ -38,6 +38,8 @@ public interface Message extends Serializable {
 	 * on this object, this attribute will not be changed.
 	 */
 	ServentInfo getOriginalSenderInfo();
+
+	ServentInfo getOriginalReceiverInfo();
 	
 	/**
 	 * If a servent uses <code>makeMeASender</code> when resending a message, it will

@@ -5,7 +5,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -21,7 +24,7 @@ public class SimpleServentListener implements Runnable, Cancellable {
 	private volatile boolean working = true;
 	
 	private SnapshotCollector snapshotCollector;
-	
+
 	public SimpleServentListener(SnapshotCollector snapshotCollector) {
 		this.snapshotCollector = snapshotCollector;
 	}
@@ -30,8 +33,6 @@ public class SimpleServentListener implements Runnable, Cancellable {
 	 * Thread pool for executing the handlers. Each client will get it's own handler thread.
 	 */
 	private final ExecutorService threadPool = Executors.newWorkStealingPool();
-	
-	private List<Message> redMessages = new ArrayList<>();
 	
 	@Override
 	public void run() {
@@ -46,8 +47,7 @@ public class SimpleServentListener implements Runnable, Cancellable {
 			AppConfig.timestampedErrorPrint("Couldn't open listener socket on: " + AppConfig.myServentInfo.getListenerPort());
 			System.exit(0);
 		}
-		
-		
+
 		while (working) {
 			try {
 				Socket clientSocket = listenerSocket.accept();

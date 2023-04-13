@@ -22,54 +22,15 @@ public class TransactionMessage extends BasicMessage {
 	private static final long serialVersionUID = -333251402058492901L;
 
 	private transient BitcakeManager bitcakeManager;
-	private int originalReceiverId;
 	
-	public TransactionMessage(ServentInfo sender, ServentInfo receiver, int amount,
-							  BitcakeManager bitcakeManager, Map<Integer, Integer> vectorClock) {
-		super(MessageType.TRANSACTION, sender, receiver, String.valueOf(amount));
+	public TransactionMessage(ServentInfo sender,
+							  ServentInfo finalReceiver,
+							  ServentInfo receiver,
+							  int amount,
+							  BitcakeManager bitcakeManager,
+							  Map<Integer, Integer> vectorClock) {
+		super(MessageType.TRANSACTION, sender, finalReceiver, receiver, vectorClock, String.valueOf(amount));
 		this.bitcakeManager = bitcakeManager;
-		this.originalReceiverId = receiver.getId();
-		this.setSenderVectorClock(vectorClock);
-	}
-
-	private TransactionMessage(ServentInfo originalSenderInfo, ServentInfo receiverInfo,
-							   List<ServentInfo> routeList, Map<Integer, Integer> senderVectorClock,
-							   String messageText, int messageId,
-							   BitcakeManager bitcakeManager, int originalReceiver) {
-		super(MessageType.TRANSACTION, originalSenderInfo, receiverInfo, routeList, senderVectorClock, messageText, messageId);
-		this.bitcakeManager = bitcakeManager;
-		this.originalReceiverId = originalReceiver;
-	}
-
-	public int getOriginalReceiver() {
-		return originalReceiverId;
-	}
-
-	@Override
-	public Message makeMeASender() {
-		ServentInfo newRouteItem = AppConfig.myServentInfo;
-
-		List<ServentInfo> newRouteList = new ArrayList<>(getRoute());
-		newRouteList.add(newRouteItem);
-		Message toReturn = new TransactionMessage(getOriginalSenderInfo(), getReceiverInfo(), newRouteList, getSenderVectorClock(),
-				getMessageText(), getMessageId(), bitcakeManager, originalReceiverId);
-
-		return toReturn;
-	}
-
-	@Override
-	public Message changeReceiver(Integer newReceiverId) {
-		if (AppConfig.myServentInfo.getNeighbors().contains(newReceiverId)) {
-			ServentInfo newReceiverInfo = AppConfig.getInfoById(newReceiverId);
-
-			Message toReturn = new TransactionMessage(getOriginalSenderInfo(), newReceiverInfo, getRoute(), getSenderVectorClock(),
-					getMessageText(), getMessageId(), bitcakeManager, originalReceiverId);
-
-			return toReturn;
-		} else {
-			AppConfig.timestampedErrorPrint("Trying to make a message for " + newReceiverId + " who is not a neighbor.");
-			return null;
-		}
 	}
 
 	/**
@@ -79,28 +40,17 @@ public class TransactionMessage extends BasicMessage {
 	 */
 	@Override
 	public void sendEffect() {
-		if(bitcakeManager!=null) {
+		if(bitcakeManager != null) {
 			int amount = Integer.parseInt(getMessageText());
 
-			synchronized (AppConfig.paranoidLock){
-				bitcakeManager.takeSomeBitcakes(amount);
-				CausalBroadcastShared.incrementClock(AppConfig.myServentInfo.getId());
+			bitcakeManager.takeSomeBitcakes(amount);
 
-				if (bitcakeManager instanceof ABBitcakeManager) {
-					ABBitcakeManager abBitcakeManager = (ABBitcakeManager) bitcakeManager;
-					//abFinancialManager.recordGiveTransaction(getReceiverInfo().getId(), amount);
-				}
-				if (bitcakeManager instanceof AVBitcakeManager) {
-					AVBitcakeManager avBitcakeManager = (AVBitcakeManager) bitcakeManager;
-					//avFinancialManager.recordGiveTransaction(getSenderVectorClock(),getReceiverInfo().getId(),amount);
-				}
-				/*
-				if (bitcakeManager instanceof LaiYangBitcakeManager && isWhite()) {
-					LaiYangBitcakeManager lyFinancialManager = (LaiYangBitcakeManager)bitcakeManager;
-
-					lyFinancialManager.recordGiveTransaction(getReceiverInfo().getId(), amount);
-				}
-				*/
+			if (bitcakeManager instanceof ABBitcakeManager) {
+				ABBitcakeManager abBitcakeManager = (ABBitcakeManager) bitcakeManager;
+				abBitcakeManager.recordGiveTransaction(getOriginalReceiverInfo().getId(), amount);
+			} else if (bitcakeManager instanceof AVBitcakeManager) {
+				AVBitcakeManager avBitcakeManager = (AVBitcakeManager) bitcakeManager;
+				//avBitcakeManager.recordGiveTransaction(getSenderVectorClock(),getReceiverInfo().getId(),amount);
 			}
 		}
 	}

@@ -21,7 +21,7 @@ public class ABTokenHandler implements MessageHandler {
     @Override
     public void run() {
         try{
-            ((ABBitcakeManager)bitcakeManager).handleToken(clientMessage.getOriginalSenderInfo().getId(), snapshotCollector);
+            ((ABBitcakeManager)bitcakeManager).handleToken(clientMessage.getOriginalSenderInfo(), snapshotCollector);
         }
         catch (Exception e)
         {

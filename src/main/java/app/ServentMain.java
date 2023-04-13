@@ -59,12 +59,13 @@ public class ServentMain {
 		AppConfig.timestampedStandardPrint("Starting servent " + AppConfig.myServentInfo);
 		
 		SnapshotCollector snapshotCollector;
-		
+
 		if (AppConfig.SNAPSHOT_TYPE == SnapshotType.NONE) {
 			snapshotCollector = new NullSnapshotCollector();
 		} else {
 			snapshotCollector = new SnapshotCollectorWorker(AppConfig.SNAPSHOT_TYPE);
 		}
+
 		Thread snapshotCollectorThread = new Thread(snapshotCollector);
 		snapshotCollectorThread.start();
 		

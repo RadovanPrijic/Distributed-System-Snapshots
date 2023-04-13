@@ -29,28 +29,18 @@ public class TransactionHandler implements MessageHandler {
 				AppConfig.timestampedErrorPrint("Couldn't parse amount: " + amountString);
 				return;
 			}
-			
+
 			bitcakeManager.addSomeBitcakes(amountNumber);
-			synchronized (AppConfig.paranoidLock) {
-				if (bitcakeManager instanceof ABBitcakeManager) {
-					ABBitcakeManager abBitcakeManager = (ABBitcakeManager) bitcakeManager;
-					//abBitcakeManager.recordGetTransaction(clientMessage.getOriginalSenderInfo().getId(), amountNumber);
-				}
-				if (bitcakeManager instanceof AVBitcakeManager) {
-					AVBitcakeManager avBitcakeManager = (AVBitcakeManager) bitcakeManager;
-					//avBitcakeManager.recordGetTransaction(clientMessage.getSenderVectorClock(),clientMessage.getOriginalSenderInfo().getId(), amountNumber);
-				}
-				/*
-				if (bitcakeManager instanceof LaiYangBitcakeManager && clientMessage.isWhite()) {
-					LaiYangBitcakeManager lyBitcakeManager = (LaiYangBitcakeManager)bitcakeManager;
-					
-					lyBitcakeManager.recordGetTransaction(clientMessage.getOriginalSenderInfo().getId(), amountNumber);
-				}
-				*/
+
+			if (bitcakeManager instanceof ABBitcakeManager) {
+				ABBitcakeManager abBitcakeManager = (ABBitcakeManager) bitcakeManager;
+				abBitcakeManager.recordGetTransaction(clientMessage.getOriginalSenderInfo().getId(), amountNumber);
+			} else if (bitcakeManager instanceof AVBitcakeManager) {
+				AVBitcakeManager avBitcakeManager = (AVBitcakeManager) bitcakeManager;
+				//avBitcakeManager.recordGetTransaction(clientMessage.getSenderVectorClock(),clientMessage.getOriginalSenderInfo().getId(), amountNumber);
 			}
 		} else {
 			AppConfig.timestampedErrorPrint("Transaction handler got: " + clientMessage);
 		}
 	}
-
 }

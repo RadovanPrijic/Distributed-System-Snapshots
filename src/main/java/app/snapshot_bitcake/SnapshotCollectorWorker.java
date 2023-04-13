@@ -1,22 +1,14 @@
 package app.snapshot_bitcake;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import app.AppConfig;
 import app.snapshot_bitcake.ab.ABBitcakeManager;
 import app.snapshot_bitcake.ab.ABSnapshotResult;
 import app.snapshot_bitcake.av.AVBitcakeManager;
-import app.snapshot_bitcake.cl.CLSnapshotResult;
-import app.snapshot_bitcake.ly.LYSnapshotResult;
-import app.snapshot_bitcake.naive.NaiveBitcakeManager;
-import servent.message.Message;
-import servent.message.snapshot.naive.NaiveAskAmountMessage;
-import servent.message.util.MessageUtil;
 
 /**
  * Main snapshot collector class. Has support for Naive, Chandy-Lamport
@@ -26,7 +18,6 @@ import servent.message.util.MessageUtil;
  *
  */
 public class SnapshotCollectorWorker implements SnapshotCollector {
-
 
 	private volatile boolean working = true;
 	private volatile boolean terminateAV = false;
@@ -192,13 +183,6 @@ public class SnapshotCollectorWorker implements SnapshotCollector {
 	public void initiateTermination(){
 		terminateAV = true;
 	}
-
-	/*
-	@Override
-	public boolean isCollecting() {
-		return collecting.get();
-	}
-	*/
 	
 	@Override
 	public void startCollecting() {

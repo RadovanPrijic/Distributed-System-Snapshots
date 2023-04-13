@@ -17,20 +17,26 @@ public class ABTellMessage extends BasicMessage {
 
     private static final long serialVersionUID = 1536279421038991652L;
     private ABSnapshotResult abSnapshotResult;
-    private int collectorId;
 
-    public ABTellMessage(ServentInfo sender, ServentInfo receiver, ABSnapshotResult abSnapshotResult,  int collectorId) {
-        super(MessageType.AB_TELL, sender, receiver);
+    public ABTellMessage(ServentInfo originalSenderInfo,
+                         ServentInfo originalReceiverInfo,
+                         ServentInfo receiverInfo,
+                         Map<Integer, Integer> vectorClock,
+                         ABSnapshotResult abSnapshotResult) {
+        super(MessageType.AB_TELL, originalSenderInfo, originalReceiverInfo, receiverInfo, vectorClock);
         this.abSnapshotResult = abSnapshotResult;
-        this.collectorId = collectorId;
     }
 
-    private ABTellMessage(ServentInfo originalSenderInfo, ServentInfo receiverInfo, List<ServentInfo> routeList,
-                          Map<Integer, Integer> senderVectorClock, String messageText, int messageId,
-                          ABSnapshotResult abSnapshotResult, int collectorId) {
-        super(MessageType.AB_TELL, originalSenderInfo, receiverInfo, routeList, senderVectorClock, messageText, messageId);
+    private ABTellMessage(ServentInfo originalSenderInfo,
+                          ServentInfo originalReceiverInfo,
+                          ServentInfo receiverInfo,
+                          Map<Integer, Integer> senderVectorClock,
+                          List<ServentInfo> routeList,
+                          String messageText,
+                          int messageId,
+                          ABSnapshotResult abSnapshotResult) {
+        super(MessageType.AB_TELL, originalSenderInfo, originalReceiverInfo, receiverInfo, senderVectorClock, routeList, messageText, messageId);
         this.abSnapshotResult = abSnapshotResult;
-        this.collectorId = collectorId;
     }
 
     @Override
@@ -39,8 +45,11 @@ public class ABTellMessage extends BasicMessage {
 
         List<ServentInfo> newRouteList = new ArrayList<>(getRoute());
         newRouteList.add(newRouteItem);
-        Message toReturn = new ABTellMessage(getOriginalSenderInfo(), getReceiverInfo(), newRouteList, getSenderVectorClock(),
-                getMessageText(), getMessageId(), abSnapshotResult, collectorId);
+        Message toReturn = new ABTellMessage(
+                getOriginalSenderInfo(), getOriginalReceiverInfo(), getReceiverInfo(),
+                getSenderVectorClock(), newRouteList,
+                getMessageText(), getMessageId(),
+                abSnapshotResult);
 
         return toReturn;
     }
@@ -50,8 +59,11 @@ public class ABTellMessage extends BasicMessage {
         if (AppConfig.myServentInfo.getNeighbors().contains(newReceiverId)) {
             ServentInfo newReceiverInfo = AppConfig.getInfoById(newReceiverId);
 
-            Message toReturn = new ABTellMessage(getOriginalSenderInfo(), newReceiverInfo, getRoute(), getSenderVectorClock(),
-                    getMessageText(), getMessageId(), abSnapshotResult, collectorId);
+            Message toReturn = new ABTellMessage(
+                    getOriginalSenderInfo(), getOriginalReceiverInfo(), newReceiverInfo,
+                    getSenderVectorClock(), getRoute(),
+                    getMessageText(), getMessageId(),
+                    abSnapshotResult);
 
             return toReturn;
         } else {
@@ -62,9 +74,5 @@ public class ABTellMessage extends BasicMessage {
 
     public ABSnapshotResult getABSnapshotResult() {
         return abSnapshotResult;
-    }
-
-    public int getCollectorId() {
-        return collectorId;
     }
 }

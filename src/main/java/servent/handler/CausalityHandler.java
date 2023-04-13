@@ -15,6 +15,7 @@ public class CausalityHandler implements MessageHandler {
     private Message clientMessage;
     private static Set<Message> receivedBroadcasts = Collections.newSetFromMap(new ConcurrentHashMap<Message, Boolean>());
     private SnapshotCollector snapshotCollector;
+    private Object pendingMessagesLock = new Object();
 
     public CausalityHandler(Message clientMessage, SnapshotCollector snapshotCollector) {
         this.clientMessage = clientMessage;
@@ -28,17 +29,21 @@ public class CausalityHandler implements MessageHandler {
             if (senderInfo.getId() == AppConfig.myServentInfo.getId()) {
                 //AppConfig.timestampedStandardPrint("Got own message back. No rebroadcast.");
             } else {
-                boolean didPut = receivedBroadcasts.add(clientMessage);
-                if (didPut) {
-                    CausalBroadcastShared.addPendingMessage(clientMessage);
-                    CausalBroadcastShared.checkPendingMessages(snapshotCollector);
-                    //AppConfig.timestampedStandardPrint("Rebroadcasting... " + receivedBroadcasts.size());
-                    for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
-                        //Same message, different receiver, and add us to the route table.
-                        MessageUtil.sendMessage(clientMessage.changeReceiver(neighbor).makeMeASender());
+                synchronized (pendingMessagesLock) {
+                    boolean didPut = receivedBroadcasts.add(clientMessage);
+
+                    if (didPut) {
+                        CausalBroadcastShared.addPendingMessage(clientMessage);
+                        CausalBroadcastShared.checkPendingMessages(snapshotCollector);
+
+                        //AppConfig.timestampedStandardPrint("Rebroadcasting... " + receivedBroadcasts.size());
+                        for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
+                            //Same message, different receiver, and add us to the route table.
+                            MessageUtil.sendMessage(clientMessage.changeReceiver(neighbor).makeMeASender());
+                        }
+                    } else {
+                        //AppConfig.timestampedStandardPrint("Already had this. No rebroadcast.");
                     }
-                } else {
-                    //AppConfig.timestampedStandardPrint("Already had this. No rebroadcast.");
                 }
             }
         } catch (Exception e) {

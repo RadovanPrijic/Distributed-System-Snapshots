@@ -23,6 +23,7 @@ public class BasicMessage implements Message {
 	private static final long serialVersionUID = -9075856313609777945L;
 	private final MessageType type;
 	private final ServentInfo originalSenderInfo;
+	private final ServentInfo originalReceiverInfo;
 	private final ServentInfo receiverInfo;
 	private final List<ServentInfo> routeList;
 	private final String messageText;
@@ -32,23 +33,33 @@ public class BasicMessage implements Message {
 	private static AtomicInteger messageCounter = new AtomicInteger(0);
 	private final int messageId;
 	
-	public BasicMessage(MessageType type, ServentInfo originalSenderInfo, ServentInfo receiverInfo) {
+	public BasicMessage(MessageType type,
+						ServentInfo originalSenderInfo,
+						ServentInfo originalReceiverInfo,
+						ServentInfo receiverInfo,
+						Map<Integer, Integer> senderVectorClock) {
 		this.type = type;
 		this.originalSenderInfo = originalSenderInfo;
+		this.originalReceiverInfo = originalReceiverInfo;
 		this.receiverInfo = receiverInfo;
 		this.routeList = new ArrayList<>();
-		this.senderVectorClock = new ConcurrentHashMap<>(CausalBroadcastShared.getVectorClock());
+		this.senderVectorClock = new ConcurrentHashMap<>(senderVectorClock);
 		this.messageText = "";
 		this.messageId = messageCounter.getAndIncrement();
 	}
 	
-	public BasicMessage(MessageType type, ServentInfo originalSenderInfo, ServentInfo receiverInfo,
-			String messageText) {
+	public BasicMessage(MessageType type,
+						ServentInfo originalSenderInfo,
+						ServentInfo originalReceiverInfo,
+						ServentInfo receiverInfo,
+						Map<Integer, Integer> senderVectorClock,
+						String messageText) {
 		this.type = type;
 		this.originalSenderInfo = originalSenderInfo;
+		this.originalReceiverInfo = originalReceiverInfo;
 		this.receiverInfo = receiverInfo;
 		this.routeList = new ArrayList<>();
-		this.senderVectorClock = new ConcurrentHashMap<>(CausalBroadcastShared.getVectorClock());
+		this.senderVectorClock = new ConcurrentHashMap<>(senderVectorClock);
 		this.messageText = messageText;
 		this.messageId = messageCounter.getAndIncrement();
 	}
@@ -61,6 +72,11 @@ public class BasicMessage implements Message {
 	@Override
 	public ServentInfo getOriginalSenderInfo() {
 		return originalSenderInfo;
+	}
+
+	@Override
+	public ServentInfo getOriginalReceiverInfo() {
+		return this.originalReceiverInfo;
 	}
 
 	@Override
@@ -77,10 +93,6 @@ public class BasicMessage implements Message {
 	public Map<Integer, Integer> getSenderVectorClock() {
 		return senderVectorClock;
 	}
-
-	public void setSenderVectorClock(Map<Integer, Integer> newVectorClock){
-		senderVectorClock = new ConcurrentHashMap<>(newVectorClock);
-	}
 	
 	@Override
 	public String getMessageText() {
@@ -92,10 +104,17 @@ public class BasicMessage implements Message {
 		return messageId;
 	}
 	
-	protected BasicMessage(MessageType type, ServentInfo originalSenderInfo, ServentInfo receiverInfo,
-			List<ServentInfo> routeList, Map<Integer, Integer> senderVectorClock, String messageText, int messageId) {
+	protected BasicMessage(MessageType type,
+						   ServentInfo originalSenderInfo,
+						   ServentInfo originalReceiverInfo,
+						   ServentInfo receiverInfo,
+						   Map<Integer, Integer> senderVectorClock,
+						   List<ServentInfo> routeList,
+						   String messageText,
+						   int messageId) {
 		this.type = type;
 		this.originalSenderInfo = originalSenderInfo;
+		this.originalReceiverInfo = originalReceiverInfo;
 		this.receiverInfo = receiverInfo;
 		this.routeList = routeList;
 		this.senderVectorClock = senderVectorClock;
@@ -114,8 +133,11 @@ public class BasicMessage implements Message {
 		
 		List<ServentInfo> newRouteList = new ArrayList<>(routeList);
 		newRouteList.add(newRouteItem);
-		Message toReturn = new BasicMessage(getMessageType(), getOriginalSenderInfo(),
-				getReceiverInfo(), newRouteList, getSenderVectorClock(), getMessageText(), getMessageId());
+		Message toReturn = new BasicMessage(
+				getMessageType(), getOriginalSenderInfo(),
+				getOriginalReceiverInfo(), getReceiverInfo(),
+				getSenderVectorClock(), newRouteList,
+				getMessageText(), getMessageId());
 		
 		return toReturn;
 	}
@@ -129,8 +151,11 @@ public class BasicMessage implements Message {
 		if (AppConfig.myServentInfo.getNeighbors().contains(newReceiverId)) {
 			ServentInfo newReceiverInfo = AppConfig.getInfoById(newReceiverId);
 			
-			Message toReturn = new BasicMessage(getMessageType(), getOriginalSenderInfo(),
-					newReceiverInfo, getRoute(), getSenderVectorClock(), getMessageText(), getMessageId());
+			Message toReturn = new BasicMessage(
+					getMessageType(), getOriginalSenderInfo(),
+					getOriginalReceiverInfo(), newReceiverInfo,
+					getSenderVectorClock(), getRoute(),
+					getMessageText(), getMessageId());
 			
 			return toReturn;
 		} else {
@@ -172,8 +197,8 @@ public class BasicMessage implements Message {
 	@Override
 	public String toString() {
 		return "[" + getOriginalSenderInfo().getId() + "|" + getMessageId() + "|" +
-					getMessageText() + "|" + getMessageType() + "|" +
-					getReceiverInfo().getId() + "]";
+				getMessageText() + "|" + getMessageType() + "|" +
+				(getOriginalReceiverInfo() != null ? getOriginalReceiverInfo().getId() : null) + "]";
 	}
 
 	/**
