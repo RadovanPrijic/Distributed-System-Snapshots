@@ -24,10 +24,12 @@ public class TransactionMessage extends BasicMessage {
 	private transient BitcakeManager bitcakeManager;
 	private int originalReceiverId;
 	
-	public TransactionMessage(ServentInfo sender, ServentInfo receiver, int amount, BitcakeManager bitcakeManager) {
+	public TransactionMessage(ServentInfo sender, ServentInfo receiver, int amount,
+							  BitcakeManager bitcakeManager, Map<Integer, Integer> vectorClock) {
 		super(MessageType.TRANSACTION, sender, receiver, String.valueOf(amount));
 		this.bitcakeManager = bitcakeManager;
 		this.originalReceiverId = receiver.getId();
+		this.setSenderVectorClock(vectorClock);
 	}
 
 	private TransactionMessage(ServentInfo originalSenderInfo, ServentInfo receiverInfo,

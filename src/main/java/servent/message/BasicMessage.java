@@ -26,7 +26,7 @@ public class BasicMessage implements Message {
 	private final ServentInfo receiverInfo;
 	private final List<ServentInfo> routeList;
 	private final String messageText;
-	private final Map<Integer, Integer> senderVectorClock;
+	private Map<Integer, Integer> senderVectorClock;
 	
 	//This gives us a unique id - incremented in every natural constructor.
 	private static AtomicInteger messageCounter = new AtomicInteger(0);
@@ -76,6 +76,10 @@ public class BasicMessage implements Message {
 	@Override
 	public Map<Integer, Integer> getSenderVectorClock() {
 		return senderVectorClock;
+	}
+
+	public void setSenderVectorClock(Map<Integer, Integer> newVectorClock){
+		senderVectorClock = new ConcurrentHashMap<>(newVectorClock);
 	}
 	
 	@Override

@@ -29,7 +29,7 @@ import java.util.function.BiFunction;
  */
 public class CausalBroadcastShared {
     private static Map<Integer, Integer> vectorClock = new ConcurrentHashMap<>();
-    private static List<Message> commitedCausalMessageList = new CopyOnWriteArrayList<>();
+    //private static List<Message> commitedCausalMessageList = new CopyOnWriteArrayList<>();
     private static Queue<Message> pendingMessages = new ConcurrentLinkedQueue<>();
     private static Object pendingMessagesLock = new Object();
     private static final ExecutorService handlerThreadPool = Executors.newWorkStealingPool();
@@ -53,14 +53,6 @@ public class CausalBroadcastShared {
     public static Map<Integer, Integer> getVectorClock() {
         return vectorClock;
     }
-
-    public static void commitCausalMessage(Message newMessage) {
-        //AppConfig.timestampedStandardPrint("Committing " + newMessage);
-        commitedCausalMessageList.add(newMessage);
-        incrementClock(newMessage.getOriginalSenderInfo().getId());
-        //checkPendingMessages();
-    }
-
 
     public static void addPendingMessage(Message msg) {
         pendingMessages.add(msg);
@@ -98,30 +90,30 @@ public class CausalBroadcastShared {
 
                         switch (pendingMessage.getMessageType()) {
                             case TRANSACTION:
-                                commitCausalMessage(pendingMessage);
+                                incrementClock(pendingMessage.getOriginalSenderInfo().getId());
                                 if(((TransactionMessage)pendingMessage).getOriginalReceiver() == AppConfig.myServentInfo.getId())
                                     handlerThreadPool.submit(new TransactionHandler(pendingMessage, snapshotCollector.getBitcakeManager()));
                                 break;
                             case AB_TOKEN:
-                                commitCausalMessage(pendingMessage);
+                                incrementClock(pendingMessage.getOriginalSenderInfo().getId());
                                 handlerThreadPool.submit(new ABTokenHandler(pendingMessage, snapshotCollector.getBitcakeManager(), snapshotCollector));
                                 break;
                             case AB_TELL:
-                                commitCausalMessage(pendingMessage);
+                                incrementClock(pendingMessage.getOriginalSenderInfo().getId());
                                 if(((ABTellMessage)pendingMessage).getCollectorId() == AppConfig.myServentInfo.getId())
                                     handlerThreadPool.submit(new ABTellHandler(pendingMessage, snapshotCollector));
                                 break;
                             case AV_TOKEN:
-                                commitCausalMessage(pendingMessage);
+                                incrementClock(pendingMessage.getOriginalSenderInfo().getId());
                                 //handlerThreadPool.submit(new AVTokenHandler(pendingMessage, snapshotCollector.getBitcakeManager()));
                                 break;
                             case AV_DONE:
-                                commitCausalMessage(pendingMessage);
+                                incrementClock(pendingMessage.getOriginalSenderInfo().getId());
                                 //if(((DoneMessage)pendingMessage).getInitiatorID() == AppConfig.myServentInfo.getId())
                                 //handlerThreadPool.submit(new AVDoneHandler(pendingMessage, snapshotCollector));
                                 break;
                             case AV_TERMINATE:
-                                commitCausalMessage(pendingMessage);
+                                incrementClock(pendingMessage.getOriginalSenderInfo().getId());
                                 //handlerThreadPool.submit(new AVTerminateHandler(pendingMessage, snapshotCollector));
                                 break;
                         }

@@ -1,11 +1,14 @@
 package cli.command;
 
 import app.AppConfig;
+import app.CausalBroadcastShared;
 import app.ServentInfo;
 import app.snapshot_bitcake.BitcakeManager;
 import servent.message.Message;
 import servent.message.TransactionMessage;
 import servent.message.util.MessageUtil;
+
+import java.util.Map;
 
 public class TransactionBurstCommand implements CLICommand {
 
@@ -23,23 +26,17 @@ public class TransactionBurstCommand implements CLICommand {
 		
 		@Override
 		public void run() {
+			Map<Integer, Integer> myClock = CausalBroadcastShared.getVectorClock();
+
 			for (int i = 0; i < TRANSACTION_COUNT; i++) {
 				for (int neighbor : AppConfig.myServentInfo.getNeighbors()) {
 					ServentInfo neighborInfo = AppConfig.getInfoById(neighbor);
-					
 					int amount = 1 + (int)(Math.random() * MAX_TRANSFER_AMOUNT);
-					
-					/*
-					 * The message itself will reduce our bitcake count as it is being sent.
-					 * The sending might be delayed, so we want to make sure we do the
-					 * reducing at the right time, not earlier.
-					 */
+
 					Message transactionMessage = new TransactionMessage(
-							AppConfig.myServentInfo, neighborInfo, amount, bitcakeManager);
-					
+							AppConfig.myServentInfo, neighborInfo, amount, bitcakeManager, myClock);
 					MessageUtil.sendMessage(transactionMessage);
 				}
-				
 			}
 		}
 	}

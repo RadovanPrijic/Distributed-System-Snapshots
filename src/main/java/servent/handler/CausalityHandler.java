@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class CausalityHandler implements MessageHandler{
+public class CausalityHandler implements MessageHandler {
     private Message clientMessage;
     private static Set<Message> receivedBroadcasts = Collections.newSetFromMap(new ConcurrentHashMap<Message, Boolean>());
     private SnapshotCollector snapshotCollector;
@@ -41,8 +41,7 @@ public class CausalityHandler implements MessageHandler{
                     //AppConfig.timestampedStandardPrint("Already had this. No rebroadcast.");
                 }
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
