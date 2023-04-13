@@ -2,8 +2,11 @@ package app;
 
 import app.snapshot_bitcake.SnapshotCollector;
 import servent.handler.TransactionHandler;
+import servent.handler.snapshot.ab.ABTellHandler;
+import servent.handler.snapshot.ab.ABTokenHandler;
 import servent.message.Message;
 import servent.message.TransactionMessage;
+import servent.message.snapshot.ab.ABTellMessage;
 
 import java.util.Iterator;
 import java.util.List;
@@ -101,16 +104,16 @@ public class CausalBroadcastShared {
                                 break;
                             case AB_TOKEN:
                                 commitCausalMessage(pendingMessage);
-                                //handlerThreadPool.submit(new ABTokenHandler(pendingMessage, snapshotCollector.getBitcakeManager()));
+                                handlerThreadPool.submit(new ABTokenHandler(pendingMessage, snapshotCollector.getBitcakeManager(), snapshotCollector));
+                                break;
+                            case AB_TELL:
+                                commitCausalMessage(pendingMessage);
+                                if(((ABTellMessage)pendingMessage).getCollectorId() == AppConfig.myServentInfo.getId())
+                                    handlerThreadPool.submit(new ABTellHandler(pendingMessage, snapshotCollector));
                                 break;
                             case AV_TOKEN:
                                 commitCausalMessage(pendingMessage);
                                 //handlerThreadPool.submit(new AVTokenHandler(pendingMessage, snapshotCollector.getBitcakeManager()));
-                                break;
-                            case AB_TELL:
-                                commitCausalMessage(pendingMessage);
-                                //if(((ABTellMessage)pendingMessage).getInitiatorID() == ppConfig.myServentInfo.getId())
-                                //handlerThreadPool.submit(new ABTellHandler(pendingMessage, snapshotCollector));
                                 break;
                             case AV_DONE:
                                 commitCausalMessage(pendingMessage);

@@ -89,7 +89,7 @@ public class SnapshotCollectorWorker implements SnapshotCollector {
 			//1 send asks
 			switch (snapshotType) {
 				case AB:
-					//((ABBitcakeManager)bitcakeManager).tokenEvent();
+					((ABBitcakeManager)bitcakeManager).tokenEvent(this);
 					break;
 				case AV:
 					//((AVBitcakeManager)bitcakeManager).tokenEvent();
@@ -133,7 +133,7 @@ public class SnapshotCollectorWorker implements SnapshotCollector {
 			switch (snapshotType) {
 				case AB:
 					sum = 0;
-					for (Entry<Integer, app.snapshot_bitcake.ABSnapshotResult> nodeResult : collectedABValues.entrySet()) {
+					for (Entry<Integer, ABSnapshotResult> nodeResult : collectedABValues.entrySet()) {
 						sum += nodeResult.getValue().getRecordedAmount();
 						AppConfig.timestampedStandardPrint(
 								"Recorded bitcake amount for " + nodeResult.getKey() + " = " + nodeResult.getValue().getRecordedAmount());
@@ -159,7 +159,6 @@ public class SnapshotCollectorWorker implements SnapshotCollector {
 					}
 
 					AppConfig.timestampedStandardPrint("System bitcake count: " + sum);
-
 					collectedABValues.clear(); //reset for next invocation
 					break;
 				case AV:
@@ -176,40 +175,6 @@ public class SnapshotCollectorWorker implements SnapshotCollector {
 				case NONE:
 					//Shouldn't be able to come here. See constructor.
 					break;
-
-				/*
-			case LAI_YANG:
-				sum = 0;
-				for (Entry<Integer, LYSnapshotResult> nodeResult : collectedLYValues.entrySet()) {
-					sum += nodeResult.getValue().getRecordedAmount();
-					AppConfig.timestampedStandardPrint(
-							"Recorded bitcake amount for " + nodeResult.getKey() + " = " + nodeResult.getValue().getRecordedAmount());
-				}
-				for(int i = 0; i < AppConfig.getServentCount(); i++) {
-					for (int j = 0; j < AppConfig.getServentCount(); j++) {
-						if (i != j) {
-							if (AppConfig.getInfoById(i).getNeighbors().contains(j) &&
-								AppConfig.getInfoById(j).getNeighbors().contains(i)) {
-								int ijAmount = collectedLYValues.get(i).getGiveHistory().get(j);
-								int jiAmount = collectedLYValues.get(j).getGetHistory().get(i);
-								
-								if (ijAmount != jiAmount) {
-									String outputString = String.format(
-											"Unreceived bitcake amount: %d from servent %d to servent %d",
-											ijAmount - jiAmount, i, j);
-									AppConfig.timestampedStandardPrint(outputString);
-									sum += ijAmount - jiAmount;
-								}
-							}
-						}
-					}
-				}
-				
-				AppConfig.timestampedStandardPrint("System bitcake count: " + sum);
-				
-				collectedLYValues.clear(); //reset for next invocation
-				break;
-				*/
 			}
 			collecting.set(false);
 		}

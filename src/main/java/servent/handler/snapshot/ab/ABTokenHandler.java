@@ -1,30 +1,27 @@
-package servent.handler.snapshot;
+package servent.handler.snapshot.ab;
 
-import app.AppConfig;
-import app.snapshot_bitcake.AcharyaBadrinathBitcakeManager;
-import app.snapshot_bitcake.AlagarVenkatesanBitcakeManager;
 import app.snapshot_bitcake.BitcakeManager;
+import app.snapshot_bitcake.SnapshotCollector;
+import app.snapshot_bitcake.ab.ABBitcakeManager;
 import servent.handler.MessageHandler;
 import servent.message.Message;
 
-
-public class TokenHandler implements MessageHandler {
+public class ABTokenHandler implements MessageHandler {
 
     private Message clientMessage;
     private BitcakeManager bitcakeManager;
+    private SnapshotCollector snapshotCollector;
 
-    public TokenHandler(Message clientMessage, BitcakeManager bitcakeManager) {
+    public ABTokenHandler(Message clientMessage, BitcakeManager bitcakeManager, SnapshotCollector snapshotCollector) {
         this.clientMessage = clientMessage;
         this.bitcakeManager = bitcakeManager;
+        this.snapshotCollector = snapshotCollector;
     }
 
     @Override
     public void run() {
         try{
-            if(bitcakeManager instanceof AcharyaBadrinathBitcakeManager)
-                ((AcharyaBadrinathBitcakeManager)bitcakeManager).sendTell(clientMessage.getOriginalSenderInfo().getId());
-            if(bitcakeManager instanceof AlagarVenkatesanBitcakeManager)
-                ((AlagarVenkatesanBitcakeManager)bitcakeManager).recieveToken(clientMessage.getSenderVectorClock(),clientMessage.getOriginalSenderInfo().getId());
+            ((ABBitcakeManager)bitcakeManager).handleToken(clientMessage.getOriginalSenderInfo().getId(), snapshotCollector);
         }
         catch (Exception e)
         {

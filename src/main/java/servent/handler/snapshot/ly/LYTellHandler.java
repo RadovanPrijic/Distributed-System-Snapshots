@@ -21,10 +21,12 @@ public class LYTellHandler implements MessageHandler {
 	public void run() {
 		if (clientMessage.getMessageType() == MessageType.LY_TELL) {
 			LYTellMessage lyTellMessage = (LYTellMessage)clientMessage;
-			
+			/*
 			snapshotCollector.addLYSnapshotInfo(
 					lyTellMessage.getOriginalSenderInfo().getId(),
 					lyTellMessage.getLYSnapshotResult());
+
+			 */
 		} else {
 			AppConfig.timestampedErrorPrint("Tell amount handler got: " + clientMessage);
 		}

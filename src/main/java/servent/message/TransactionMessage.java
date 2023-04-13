@@ -6,7 +6,6 @@ import app.ServentInfo;
 import app.snapshot_bitcake.BitcakeManager;
 import app.snapshot_bitcake.ab.ABBitcakeManager;
 import app.snapshot_bitcake.av.AVBitcakeManager;
-import app.snapshot_bitcake.ly.LaiYangBitcakeManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +27,7 @@ public class TransactionMessage extends BasicMessage {
 	public TransactionMessage(ServentInfo sender, ServentInfo receiver, int amount, BitcakeManager bitcakeManager) {
 		super(MessageType.TRANSACTION, sender, receiver, String.valueOf(amount));
 		this.bitcakeManager = bitcakeManager;
-		this.originalReceiver = receiver.getId();
+		this.originalReceiverId = receiver.getId();
 	}
 
 	private TransactionMessage(ServentInfo originalSenderInfo, ServentInfo receiverInfo,
@@ -37,7 +36,7 @@ public class TransactionMessage extends BasicMessage {
 							   BitcakeManager bitcakeManager, int originalReceiver) {
 		super(MessageType.TRANSACTION, originalSenderInfo, receiverInfo, routeList, senderVectorClock, messageText, messageId);
 		this.bitcakeManager = bitcakeManager;
-		this.originalReceiver = originalReceiver;
+		this.originalReceiverId = originalReceiver;
 	}
 
 	public int getOriginalReceiver() {
@@ -51,7 +50,7 @@ public class TransactionMessage extends BasicMessage {
 		List<ServentInfo> newRouteList = new ArrayList<>(getRoute());
 		newRouteList.add(newRouteItem);
 		Message toReturn = new TransactionMessage(getOriginalSenderInfo(), getReceiverInfo(), newRouteList, getSenderVectorClock(),
-				getMessageText(), getMessageId(), bitcakeManager, originalReceiver);
+				getMessageText(), getMessageId(), bitcakeManager, originalReceiverId);
 
 		return toReturn;
 	}
@@ -62,7 +61,7 @@ public class TransactionMessage extends BasicMessage {
 			ServentInfo newReceiverInfo = AppConfig.getInfoById(newReceiverId);
 
 			Message toReturn = new TransactionMessage(getOriginalSenderInfo(), newReceiverInfo, getRoute(), getSenderVectorClock(),
-					getMessageText(), getMessageId(), bitcakeManager, originalReceiver);
+					getMessageText(), getMessageId(), bitcakeManager, originalReceiverId);
 
 			return toReturn;
 		} else {

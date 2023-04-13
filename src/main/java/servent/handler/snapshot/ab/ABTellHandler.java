@@ -1,34 +1,28 @@
-package servent.handler.snapshot;
-
+package servent.handler.snapshot.ab;
 
 import app.AppConfig;
 import app.snapshot_bitcake.SnapshotCollector;
 import servent.handler.MessageHandler;
 import servent.message.Message;
 import servent.message.MessageType;
-import servent.message.snapshot.ABTellMessage;
-
+import servent.message.snapshot.ab.ABTellMessage;
 
 public class ABTellHandler implements MessageHandler {
 
     private Message clientMessage;
     private SnapshotCollector snapshotCollector;
 
-
     public ABTellHandler(Message clientMessage, SnapshotCollector snapshotCollector) {
         this.clientMessage = clientMessage;
         this.snapshotCollector = snapshotCollector;
     }
-
 
     @Override
     public void run() {
         try {
             if (clientMessage.getMessageType() == MessageType.AB_TELL) {
                 ABTellMessage abTellMessage = (ABTellMessage) clientMessage;
-                snapshotCollector.addABSnapshotInfo(
-                        abTellMessage.getOriginalSenderInfo().getId(),
-                        abTellMessage.getABSnapshotResult());
+                snapshotCollector.addABSnapshotInfo(abTellMessage.getOriginalSenderInfo().getId(), abTellMessage.getABSnapshotResult());
             } else {
                 AppConfig.timestampedErrorPrint("Tell amount handler got: " + clientMessage);
             }
@@ -36,7 +30,5 @@ public class ABTellHandler implements MessageHandler {
         catch (Exception e){
             e.printStackTrace();
         }
-
     }
-
 }

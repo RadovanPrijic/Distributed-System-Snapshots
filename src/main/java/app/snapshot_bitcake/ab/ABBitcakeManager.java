@@ -3,9 +3,11 @@ package app.snapshot_bitcake.ab;
 import app.AppConfig;
 import app.CausalBroadcastShared;
 import app.snapshot_bitcake.BitcakeManager;
+import app.snapshot_bitcake.SnapshotCollector;
 import servent.message.Message;
-import servent.message.snapshot.ABTellMessage;
+import servent.message.snapshot.ab.ABTellMessage;
 import servent.message.snapshot.TokenMessage;
+import servent.message.snapshot.ab.ABTokenMessage;
 import servent.message.util.MessageUtil;
 
 import java.util.Map;
@@ -27,60 +29,58 @@ public class ABBitcakeManager implements BitcakeManager {
         }
     }
 
-    /*
-    public void sendTell(int tokenSenderId) {
+    public void handleToken(int collectorId, SnapshotCollector snapshotCollector) {
+        Message abTellMessageToMyself, abTellMessageToNeighbor;
 
-        int myId = AppConfig.myServentInfo.getId();
-        Message tellMessage = null;
-        synchronized (CausalBroadcastShared.gatheringChannel){
-            app.snapshot_bitcake.ABSnapshotResult snapshotResult = new app.snapshot_bitcake.ABSnapshotResult(myId, getCurrentBitcakeAmount(), giveHistory, getHistory);
-            tellMessage = new ABTellMessage(AppConfig.myServentInfo,null,snapshotResult,tokenSenderId);
-        }
-        for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
-            tellMessage = tellMessage.changeReceiver(neighbor);
-            MessageUtil.sendMessage(tellMessage);
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        synchronized (AppConfig.paranoidLock){
+            recordedAmount = getCurrentBitcakeAmount();
+            ABSnapshotResult abSnapshotResult = new ABSnapshotResult(AppConfig.myServentInfo.getId(), recordedAmount, giveHistory, getHistory);
+
+            if (collectorId == AppConfig.myServentInfo.getId()) {
+                abTellMessageToMyself = new ABTellMessage(AppConfig.myServentInfo, AppConfig.myServentInfo, abSnapshotResult, collectorId);
+                CausalBroadcastShared.addPendingMessage(abTellMessageToMyself);
+                CausalBroadcastShared.checkPendingMessages(snapshotCollector);
+            }
+            else {
+                abTellMessageToNeighbor = new ABTellMessage(AppConfig.myServentInfo,null, abSnapshotResult, collectorId);
+
+                for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
+                    abTellMessageToNeighbor = abTellMessageToNeighbor.changeReceiver(neighbor);
+                    MessageUtil.sendMessage(abTellMessageToNeighbor);
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                CausalBroadcastShared.incrementClock(AppConfig.myServentInfo.getId());
             }
         }
-        CausalBroadcastShared.incrementClock(AppConfig.myServentInfo.getId());
     }
 
-    public void sendToken(SnapshotCollector snapshotCollector) {
+    public void tokenEvent(SnapshotCollector snapshotCollector) {
+        Message abTokenMessageToMyself, abTokenMessageToNeighbor;
 
-        int myId = AppConfig.myServentInfo.getId();
-        Message tokenMessage=null;
-        app.snapshot_bitcake.ABSnapshotResult snapshotResult = null;
-        synchronized (CausalBroadcastShared.gatheringChannel) {
-            snapshotResult = new app.snapshot_bitcake.ABSnapshotResult(
-                    myId, getCurrentBitcakeAmount(), giveHistory, getHistory);
+        synchronized (AppConfig.paranoidLock) {
+            recordedAmount = getCurrentBitcakeAmount();
 
+            abTokenMessageToMyself = new ABTokenMessage(AppConfig.myServentInfo, AppConfig.myServentInfo);
+            CausalBroadcastShared.addPendingMessage(abTokenMessageToMyself);
+            CausalBroadcastShared.checkPendingMessages(snapshotCollector);
 
-            tokenMessage = new TokenMessage(
-                    AppConfig.myServentInfo, null);
-        }
+            abTokenMessageToNeighbor = new ABTokenMessage(AppConfig.myServentInfo, null);
 
-        for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
-            tokenMessage = tokenMessage.changeReceiver(neighbor);
-
-            MessageUtil.sendMessage(tokenMessage);
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
+                abTokenMessageToNeighbor = abTokenMessageToNeighbor.changeReceiver(neighbor);
+                MessageUtil.sendMessage(abTokenMessageToNeighbor);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
-
-        Message toMe = null;
-        toMe = new ABTellMessage(AppConfig.myServentInfo,AppConfig.myServentInfo,snapshotResult,myId);
-        CausalBroadcastShared.addPendingMessage(toMe);
-        CausalBroadcastShared.checkPendingMessages(snapshotCollector);
-
     }
-
-     */
 
     public void takeSomeBitcakes(int amount) { currentAmount.getAndAdd(-amount);}
 
