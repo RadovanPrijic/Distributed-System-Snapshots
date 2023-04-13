@@ -1,11 +1,11 @@
-package servent.handler.snapshot;
+package servent.handler.snapshot.cl;
 
 import app.AppConfig;
 import app.snapshot_bitcake.SnapshotCollector;
 import servent.handler.MessageHandler;
 import servent.message.Message;
 import servent.message.MessageType;
-import servent.message.snapshot.CLTellMessage;
+import servent.message.snapshot.cl.CLTellMessage;
 
 public class CLTellHandler implements MessageHandler {
 

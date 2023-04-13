@@ -1,4 +1,4 @@
-package app.snapshot_bitcake;
+package app.snapshot_bitcake.ly;
 
 import java.io.Serializable;
 import java.util.Map;

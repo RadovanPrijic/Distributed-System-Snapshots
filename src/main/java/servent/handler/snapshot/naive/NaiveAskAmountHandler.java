@@ -1,11 +1,11 @@
-package servent.handler.snapshot;
+package servent.handler.snapshot.naive;
 
 import app.AppConfig;
 import app.snapshot_bitcake.BitcakeManager;
 import servent.handler.MessageHandler;
 import servent.message.Message;
 import servent.message.MessageType;
-import servent.message.snapshot.NaiveTellAmountMessage;
+import servent.message.snapshot.naive.NaiveTellAmountMessage;
 import servent.message.util.MessageUtil;
 
 public class NaiveAskAmountHandler implements MessageHandler {

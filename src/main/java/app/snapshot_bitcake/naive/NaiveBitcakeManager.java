@@ -1,4 +1,6 @@
-package app.snapshot_bitcake;
+package app.snapshot_bitcake.naive;
+
+import app.snapshot_bitcake.BitcakeManager;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

@@ -1,4 +1,4 @@
-package servent.message.snapshot;
+package servent.message.snapshot.cl;
 
 import app.ServentInfo;
 import servent.message.BasicMessage;

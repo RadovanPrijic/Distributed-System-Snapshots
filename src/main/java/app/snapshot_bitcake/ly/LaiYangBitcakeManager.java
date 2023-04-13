@@ -1,4 +1,4 @@
-package app.snapshot_bitcake;
+package app.snapshot_bitcake.ly;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -6,9 +6,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 
 import app.AppConfig;
+import app.snapshot_bitcake.BitcakeManager;
+import app.snapshot_bitcake.SnapshotCollector;
 import servent.message.Message;
-import servent.message.snapshot.LYMarkerMessage;
-import servent.message.snapshot.LYTellMessage;
+import servent.message.snapshot.ly.LYMarkerMessage;
+import servent.message.snapshot.ly.LYTellMessage;
 import servent.message.util.MessageUtil;
 
 public class LaiYangBitcakeManager implements BitcakeManager {

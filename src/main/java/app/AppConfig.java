@@ -52,6 +52,7 @@ public class AppConfig {
 	
 	public static AtomicBoolean isWhite = new AtomicBoolean(true);
 	public static Object colorLock = new Object();
+	public static Object paranoidLock = new Object();
 	
 	/**
 	 * Print a message to stdout with a timestamp
@@ -125,18 +126,24 @@ public class AppConfig {
 			snapshotType = "none";
 		}
 		switch (snapshotType) {
-		case "naive":
-			SNAPSHOT_TYPE = SnapshotType.NAIVE;
-			break;
-		case "cl":
-			SNAPSHOT_TYPE = SnapshotType.CHANDY_LAMPORT;
-			break;
-		case "ly":
-			SNAPSHOT_TYPE = SnapshotType.LAI_YANG;
-			break;
-		default:
-			timestampedErrorPrint("Problem reading snapshot algorithm. Defaulting to NONE.");
-			SNAPSHOT_TYPE = SnapshotType.NONE;
+			case "ab":
+				SNAPSHOT_TYPE = SnapshotType.AB;
+				break;
+			case "av":
+				SNAPSHOT_TYPE = SnapshotType.AV;
+				break;
+			case "naive":
+				SNAPSHOT_TYPE = SnapshotType.NAIVE;
+				break;
+			case "cl":
+				SNAPSHOT_TYPE = SnapshotType.CHANDY_LAMPORT;
+				break;
+			case "ly":
+				SNAPSHOT_TYPE = SnapshotType.LAI_YANG;
+				break;
+			default:
+				timestampedErrorPrint("Problem reading snapshot algorithm. Defaulting to NONE.");
+				SNAPSHOT_TYPE = SnapshotType.NONE;
 		}
 		
 		for (int i = 0; i < serventCount; i++) {
@@ -181,6 +188,7 @@ public class AppConfig {
 			ServentInfo newInfo = new ServentInfo("localhost", i, serventPort, neighborList);
 			serventInfoList.add(newInfo);
 		}
+		CausalBroadcastShared.initializeVectorClock(serventCount);
 	}
 	
 	/**

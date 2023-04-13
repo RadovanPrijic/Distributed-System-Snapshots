@@ -1,6 +1,6 @@
-package servent.handler.snapshot;
+package servent.handler.snapshot.cl;
 
-import app.snapshot_bitcake.ChandyLamportBitcakeManager;
+import app.snapshot_bitcake.cl.ChandyLamportBitcakeManager;
 import app.snapshot_bitcake.SnapshotCollector;
 import servent.handler.MessageHandler;
 import servent.message.Message;

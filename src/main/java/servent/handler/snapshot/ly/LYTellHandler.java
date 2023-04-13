@@ -1,11 +1,11 @@
-package servent.handler.snapshot;
+package servent.handler.snapshot.ly;
 
 import app.AppConfig;
 import app.snapshot_bitcake.SnapshotCollector;
 import servent.handler.MessageHandler;
 import servent.message.Message;
 import servent.message.MessageType;
-import servent.message.snapshot.LYTellMessage;
+import servent.message.snapshot.ly.LYTellMessage;
 
 public class LYTellHandler implements MessageHandler {
 

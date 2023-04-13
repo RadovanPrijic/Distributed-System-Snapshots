@@ -1,7 +1,7 @@
-package servent.message.snapshot;
+package servent.message.snapshot.cl;
 
 import app.ServentInfo;
-import app.snapshot_bitcake.CLSnapshotResult;
+import app.snapshot_bitcake.cl.CLSnapshotResult;
 import servent.message.BasicMessage;
 import servent.message.MessageType;
 

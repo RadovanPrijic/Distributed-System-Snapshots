@@ -2,7 +2,9 @@ package servent.handler;
 
 import app.AppConfig;
 import app.snapshot_bitcake.BitcakeManager;
-import app.snapshot_bitcake.LaiYangBitcakeManager;
+import app.snapshot_bitcake.ab.ABBitcakeManager;
+import app.snapshot_bitcake.av.AVBitcakeManager;
+import app.snapshot_bitcake.ly.LaiYangBitcakeManager;
 import servent.message.Message;
 import servent.message.MessageType;
 
@@ -30,12 +32,22 @@ public class TransactionHandler implements MessageHandler {
 			}
 			
 			bitcakeManager.addSomeBitcakes(amountNumber);
-			synchronized (AppConfig.colorLock) {
+			synchronized (AppConfig.paranoidLock) {
+				if (bitcakeManager instanceof ABBitcakeManager) {
+					ABBitcakeManager abBitcakeManager = (ABBitcakeManager) bitcakeManager;
+					//abBitcakeManager.recordGetTransaction(clientMessage.getOriginalSenderInfo().getId(), amountNumber);
+				}
+				if (bitcakeManager instanceof AVBitcakeManager) {
+					AVBitcakeManager avBitcakeManager = (AVBitcakeManager) bitcakeManager;
+					//avBitcakeManager.recordGetTransaction(clientMessage.getSenderVectorClock(),clientMessage.getOriginalSenderInfo().getId(), amountNumber);
+				}
+				/*
 				if (bitcakeManager instanceof LaiYangBitcakeManager && clientMessage.isWhite()) {
 					LaiYangBitcakeManager lyBitcakeManager = (LaiYangBitcakeManager)bitcakeManager;
 					
 					lyBitcakeManager.recordGetTransaction(clientMessage.getOriginalSenderInfo().getId(), amountNumber);
 				}
+				*/
 			}
 		} else {
 			AppConfig.timestampedErrorPrint("Transaction handler got: " + clientMessage);

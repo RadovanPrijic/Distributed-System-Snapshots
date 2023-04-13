@@ -1,4 +1,4 @@
-package servent.handler.snapshot;
+package servent.handler.snapshot.ly;
 
 import servent.handler.MessageHandler;
 

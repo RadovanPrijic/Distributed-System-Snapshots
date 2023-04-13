@@ -1,4 +1,4 @@
-package servent.handler.snapshot;
+package servent.handler.snapshot.naive;
 
 import app.AppConfig;
 import app.snapshot_bitcake.SnapshotCollector;

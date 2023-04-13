@@ -4,11 +4,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import app.AppConfig;
+import app.snapshot_bitcake.ab.ABBitcakeManager;
+import app.snapshot_bitcake.ab.ABSnapshotResult;
+import app.snapshot_bitcake.av.AVBitcakeManager;
+import app.snapshot_bitcake.cl.CLSnapshotResult;
+import app.snapshot_bitcake.cl.ChandyLamportBitcakeManager;
+import app.snapshot_bitcake.ly.LYSnapshotResult;
+import app.snapshot_bitcake.ly.LaiYangBitcakeManager;
+import app.snapshot_bitcake.naive.NaiveBitcakeManager;
 import servent.message.Message;
-import servent.message.snapshot.NaiveAskAmountMessage;
+import servent.message.snapshot.naive.NaiveAskAmountMessage;
 import servent.message.util.MessageUtil;
 
 /**
@@ -20,30 +29,24 @@ import servent.message.util.MessageUtil;
  */
 public class SnapshotCollectorWorker implements SnapshotCollector {
 
+
 	private volatile boolean working = true;
-	
+	private volatile boolean terminateAV = false;
 	private AtomicBoolean collecting = new AtomicBoolean(false);
-	
-	private Map<String, Integer> collectedNaiveValues = new ConcurrentHashMap<>();
-	private Map<Integer, CLSnapshotResult> collectedCLValues = new ConcurrentHashMap<>();
-	private Map<Integer, LYSnapshotResult> collectedLYValues = new ConcurrentHashMap<>();
-	
-	private SnapshotType snapshotType = SnapshotType.NAIVE;
-	
+	private SnapshotType snapshotType;
 	private BitcakeManager bitcakeManager;
+	private Map<Integer, ABSnapshotResult> collectedABValues = new ConcurrentHashMap<>();
+	private Map<Integer, Boolean> avDoneMessages = new ConcurrentHashMap<>();
 
 	public SnapshotCollectorWorker(SnapshotType snapshotType) {
 		this.snapshotType = snapshotType;
 		
 		switch(snapshotType) {
-		case NAIVE:
-			bitcakeManager = new NaiveBitcakeManager();
+		case AB:
+			bitcakeManager = new ABBitcakeManager();
 			break;
-		case CHANDY_LAMPORT:
-			bitcakeManager = new ChandyLamportBitcakeManager();
-			break;
-		case LAI_YANG:
-			bitcakeManager = new LaiYangBitcakeManager();
+		case AV:
+			bitcakeManager = new AVBitcakeManager();
 			break;
 		case NONE:
 			AppConfig.timestampedErrorPrint("Making snapshot collector without specifying type. Exiting...");
@@ -85,49 +88,33 @@ public class SnapshotCollectorWorker implements SnapshotCollector {
 			
 			//1 send asks
 			switch (snapshotType) {
-			case NAIVE:
-				Message askMessage = new NaiveAskAmountMessage(AppConfig.myServentInfo, null);
-				
-				for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
-					askMessage = askMessage.changeReceiver(neighbor);
-					
-					MessageUtil.sendMessage(askMessage);
-				}
-				collectedNaiveValues.put("node"+AppConfig.myServentInfo.getId(), bitcakeManager.getCurrentBitcakeAmount());
-				break;
-			case CHANDY_LAMPORT:
-				((ChandyLamportBitcakeManager)bitcakeManager).markerEvent(AppConfig.myServentInfo.getId());
-				break;
-			case LAI_YANG:
-				((LaiYangBitcakeManager)bitcakeManager).markerEvent(AppConfig.myServentInfo.getId(), this);
-				break;
-			case NONE:
-				//Shouldn't be able to come here. See constructor. 
-				break;
+				case AB:
+					//((ABBitcakeManager)bitcakeManager).tokenEvent();
+					break;
+				case AV:
+					//((AVBitcakeManager)bitcakeManager).tokenEvent();
+				case NONE:
+					//Shouldn't be able to come here. See constructor.
+					break;
 			}
 			
 			//2 wait for responses or finish
 			boolean waiting = true;
 			while (waiting) {
 				switch (snapshotType) {
-				case NAIVE:
-					if (collectedNaiveValues.size() == AppConfig.getServentCount()) {
-						waiting = false;
-					}
-					break;
-				case CHANDY_LAMPORT:
-					if (collectedCLValues.size() == AppConfig.getServentCount()) {
-						waiting = false;
-					}
-					break;
-				case LAI_YANG:
-					if (collectedLYValues.size() == AppConfig.getServentCount()) {
-						waiting = false;
-					}
-					break;
-				case NONE:
-					//Shouldn't be able to come here. See constructor. 
-					break;
+					case AB:
+						if (collectedABValues.size() == AppConfig.getServentCount())
+							waiting = false;
+						break;
+					case AV:
+						if (avDoneMessages.size() == AppConfig.getServentCount() - 1) {
+							waiting = false;
+							//((AVBitcakeManager)bitcakeManager).sendTerminateMessage(this);
+						}
+						break;
+					case NONE:
+						//Shouldn't be able to come here. See constructor.
+						break;
 				}
 				
 				try {
@@ -144,44 +131,53 @@ public class SnapshotCollectorWorker implements SnapshotCollector {
 			//print
 			int sum;
 			switch (snapshotType) {
-			case NAIVE:
-				sum = 0;
-				for (Entry<String, Integer> itemAmount : collectedNaiveValues.entrySet()) {
-					sum += itemAmount.getValue();
-					AppConfig.timestampedStandardPrint(
-							"Info for " + itemAmount.getKey() + " = " + itemAmount.getValue() + " bitcake");
-				}
-				
-				AppConfig.timestampedStandardPrint("System bitcake count: " + sum);
-				
-				collectedNaiveValues.clear(); //reset for next invocation
-				break;
-			case CHANDY_LAMPORT:
-				sum = 0;
-				for (Entry<Integer, CLSnapshotResult> nodeResult : collectedCLValues.entrySet()) {
-					sum += nodeResult.getValue().getRecordedAmount();
-					AppConfig.timestampedStandardPrint(
-							"Recorded bitcake amount for " + nodeResult.getKey() + " = " + nodeResult.getValue().getRecordedAmount());
-					if (nodeResult.getValue().getAllChannelMessages().size() == 0) {
-						AppConfig.timestampedStandardPrint("No channel bitcake for " + nodeResult.getKey());
-					} else {
-						for (Entry<String, List<Integer>> channelMessages : nodeResult.getValue().getAllChannelMessages().entrySet()) {
-							int channelSum = 0;
-							for (Integer val : channelMessages.getValue()) {
-								channelSum += val;
+				case AB:
+					sum = 0;
+					for (Entry<Integer, app.snapshot_bitcake.ABSnapshotResult> nodeResult : collectedABValues.entrySet()) {
+						sum += nodeResult.getValue().getRecordedAmount();
+						AppConfig.timestampedStandardPrint(
+								"Recorded bitcake amount for " + nodeResult.getKey() + " = " + nodeResult.getValue().getRecordedAmount());
+					}
+					for(int i = 0; i < AppConfig.getServentCount(); i++) {
+						for (int j = 0; j < AppConfig.getServentCount(); j++) {
+							if (i != j) {
+								if (AppConfig.getInfoById(i).getNeighbors().contains(j) &&
+										AppConfig.getInfoById(j).getNeighbors().contains(i)) {
+									int ijAmount = collectedABValues.get(i).getGiveHistory().get(j);
+									int jiAmount = collectedABValues.get(j).getGetHistory().get(i);
+
+									if (ijAmount != jiAmount) {
+										String outputString = String.format(
+												"Unreceived bitcake amount: %d from servent %d to servent %d",
+												ijAmount - jiAmount, i, j);
+										AppConfig.timestampedStandardPrint(outputString);
+										sum += ijAmount - jiAmount;
+									}
+								}
 							}
-							AppConfig.timestampedStandardPrint("Channel bitcake for " + channelMessages.getKey() +
-									": " + channelMessages.getValue() + " with channel bitcake sum: " + channelSum);
-							
-							sum += channelSum;
 						}
 					}
-				}
-				
-				AppConfig.timestampedStandardPrint("System bitcake count: " + sum);
-				
-				collectedCLValues.clear(); //reset for next invocation
-				break;
+
+					AppConfig.timestampedStandardPrint("System bitcake count: " + sum);
+
+					collectedABValues.clear(); //reset for next invocation
+					break;
+				case AV:
+					while(!terminateAV){
+						//Loop until it's time for termination
+					}
+					try {
+						Thread.sleep(1500);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					avDoneMessages.clear();
+					break;
+				case NONE:
+					//Shouldn't be able to come here. See constructor.
+					break;
+
+				/*
 			case LAI_YANG:
 				sum = 0;
 				for (Entry<Integer, LYSnapshotResult> nodeResult : collectedLYValues.entrySet()) {
@@ -213,29 +209,33 @@ public class SnapshotCollectorWorker implements SnapshotCollector {
 				
 				collectedLYValues.clear(); //reset for next invocation
 				break;
-			case NONE:
-				//Shouldn't be able to come here. See constructor. 
-				break;
+				*/
 			}
 			collecting.set(false);
 		}
 
 	}
-	
+
 	@Override
-	public void addNaiveSnapshotInfo(String snapshotSubject, int amount) {
-		collectedNaiveValues.put(snapshotSubject, amount);
+	public void addABSnapshotInfo(int id, ABSnapshotResult abSnapshotResult) {
+		collectedABValues.put(id, abSnapshotResult);
 	}
 
 	@Override
-	public void addCLSnapshotInfo(int id, CLSnapshotResult clSnapshotResult) {
-		collectedCLValues.put(id, clSnapshotResult);
+	public void markServentAsDone(int id) {
+		avDoneMessages.put(id, true);
 	}
-	
+
+	public void initiateTermination(){
+		terminateAV = true;
+	}
+
+	/*
 	@Override
-	public void addLYSnapshotInfo(int id, LYSnapshotResult lySnapshotResult) {
-		collectedLYValues.put(id, lySnapshotResult);
+	public boolean isCollecting() {
+		return collecting.get();
 	}
+	*/
 	
 	@Override
 	public void startCollecting() {

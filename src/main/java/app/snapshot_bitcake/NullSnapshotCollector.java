@@ -1,5 +1,8 @@
 package app.snapshot_bitcake;
 
+import app.snapshot_bitcake.cl.CLSnapshotResult;
+import app.snapshot_bitcake.ly.LYSnapshotResult;
+
 /**
  * This class is used if the user hasn't specified a snapshot type in config.
  * 

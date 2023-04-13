@@ -1,4 +1,4 @@
-package app.snapshot_bitcake;
+package app.snapshot_bitcake.cl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,10 +8,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import app.AppConfig;
+import app.snapshot_bitcake.BitcakeManager;
+import app.snapshot_bitcake.SnapshotCollector;
 import servent.message.Message;
 import servent.message.MessageType;
-import servent.message.snapshot.CLMarkerMessage;
-import servent.message.snapshot.CLTellMessage;
+import servent.message.snapshot.cl.CLMarkerMessage;
+import servent.message.snapshot.cl.CLTellMessage;
 import servent.message.util.MessageUtil;
 
 public class ChandyLamportBitcakeManager implements BitcakeManager {

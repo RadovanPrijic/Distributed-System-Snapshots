@@ -1,9 +1,9 @@
-package servent.message.snapshot;
+package servent.message.snapshot.ly;
 
 import java.util.List;
 
 import app.ServentInfo;
-import app.snapshot_bitcake.LYSnapshotResult;
+import app.snapshot_bitcake.ly.LYSnapshotResult;
 import servent.message.BasicMessage;
 import servent.message.Message;
 import servent.message.MessageType;
