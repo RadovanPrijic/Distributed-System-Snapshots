@@ -36,8 +36,8 @@ public class TransactionHandler implements MessageHandler {
 				ABBitcakeManager abBitcakeManager = (ABBitcakeManager) bitcakeManager;
 				abBitcakeManager.recordGetTransaction(clientMessage.getOriginalSenderInfo().getId(), amountNumber);
 			} else if (bitcakeManager instanceof AVBitcakeManager) {
-				//AVBitcakeManager avBitcakeManager = (AVBitcakeManager) bitcakeManager;
-				//avBitcakeManager.recordGetTransaction(clientMessage.getSenderVectorClock(), clientMessage.getOriginalSenderInfo().getId(), amountNumber);
+				AVBitcakeManager avBitcakeManager = (AVBitcakeManager) bitcakeManager;
+				avBitcakeManager.recordGetTransaction(clientMessage.getSenderVectorClock(), clientMessage.getOriginalSenderInfo().getId(), amountNumber);
 			}
 		} else {
 			AppConfig.timestampedErrorPrint("Transaction handler got: " + clientMessage);

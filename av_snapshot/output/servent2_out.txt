@@ -1,28 +1,22 @@
-11:20:36 - Starting servent [2|localhost|1300]
-11:20:36 - Pausing for 60000 ms
-Got message 0 from [4|localhost|1500]
-Got message 1 from [4|localhost|1500]
-Got message 2 from [4|localhost|1500]
-Got message 3 from [4|localhost|1500]
-Got message 4 from [4|localhost|1500]
-Got message 9 from [4|localhost|1500]
-Got message 10 from [4|localhost|1500]
-Got message 11 from [4|localhost|1500]
-Got message 13 from [4|localhost|1500]
-Got message 15 from [4|localhost|1500]
-Got message 20 from [4|localhost|1500]
-Got message 21 from [4|localhost|1500]
-Got message 22 from [4|localhost|1500]
-Got message 23 from [4|localhost|1500]
-Got message 24 from [4|localhost|1500]
-Got message 29 from [4|localhost|1500]
-Got message 30 from [4|localhost|1500]
-Got message 34 from [4|localhost|1500]
-Got message 35 from [4|localhost|1500]
-Got message 36 from [4|localhost|1500]
-Got message 37 from [4|localhost|1500]
-Got message 42 from [4|localhost|1500]
-Got message 43 from [4|localhost|1500]
-Got message 46 from [4|localhost|1500]
-Got message 48 from [4|localhost|1500]
-11:21:36 - Stopping...
+15:16:14 - Starting servent [2|localhost|1300]
+15:16:14 - Pausing for 60000 ms
+15:16:26 - Committing [2|0||AV_DONE|1]
+15:16:26 - Committing [2|1||AV_DONE|1]
+15:16:26 - Committing [2|2||AV_DONE|1]
+15:16:26 - Committing [2|3||AV_DONE|1]
+15:16:26 - Committing [2|4||AV_DONE|1]
+15:16:26 - Committing [2|5||AV_DONE|1]
+15:16:31 - TERMINATION BEGINNING
+15:16:31 - Recorded bitcake amount: 1319
+15:16:31 - Total node bitcake amount: 1424
+15:16:32 - TERMINATION BEGINNING
+15:16:32 - Recorded bitcake amount: 1319
+15:16:32 - Total node bitcake amount: 1424
+15:17:14 - 54
+15:17:14 - 4
+15:17:14 - 6
+15:17:14 - 81
+15:17:14 - 54
+15:17:14 - Pending messages are empty: []
+15:17:14 - Pausing for 5000 ms
+15:17:19 - Stopping...

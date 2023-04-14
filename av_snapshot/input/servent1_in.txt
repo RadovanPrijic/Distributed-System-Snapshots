@@ -1,2 +1,6 @@
-pause 60000
+pause 9000
+bitcake_info
+pause 51000
+info
+pause 5000
 stop

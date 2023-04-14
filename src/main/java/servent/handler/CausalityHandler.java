@@ -29,7 +29,7 @@ public class CausalityHandler implements MessageHandler {
             if (senderInfo.getId() == AppConfig.myServentInfo.getId()) {
                 //AppConfig.timestampedStandardPrint("Got own message back. No rebroadcast.");
             } else {
-                synchronized (pendingMessagesLock) {
+                synchronized (AppConfig.paranoidLock) {
                     boolean didPut = receivedBroadcasts.add(clientMessage);
 
                     if (didPut) {

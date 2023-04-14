@@ -6,7 +6,6 @@ import app.ServentInfo;
 import app.snapshot_bitcake.BitcakeManager;
 import app.snapshot_bitcake.SnapshotCollector;
 import servent.message.Message;
-import servent.message.snapshot.ab.ABTokenMessage;
 import servent.message.snapshot.av.AVDoneMessage;
 import servent.message.snapshot.av.AVTerminateMessage;
 import servent.message.snapshot.av.AVTokenMessage;
@@ -109,7 +108,7 @@ public class AVBitcakeManager implements BitcakeManager {
         synchronized (AppConfig.paranoidLock) {
             Map<Integer, Integer> vectorClock = new ConcurrentHashMap<>(CausalBroadcastShared.getVectorClock());
 
-            avTerminateMessageToMyself = new AVTokenMessage(
+            avTerminateMessageToMyself = new AVTerminateMessage(
                     AppConfig.myServentInfo,
                     AppConfig.myServentInfo,
                     AppConfig.myServentInfo,
@@ -117,6 +116,7 @@ public class AVBitcakeManager implements BitcakeManager {
 
             CausalBroadcastShared.addPendingMessage(avTerminateMessageToMyself);
             CausalBroadcastShared.checkPendingMessages(snapshotCollector);
+            vectorClock.put(AppConfig.myServentInfo.getId(), vectorClock.get(AppConfig.myServentInfo.getId()) + 1);
 
             for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
                 avTerminateMessageToNeighbor = new AVTerminateMessage(
@@ -155,7 +155,7 @@ public class AVBitcakeManager implements BitcakeManager {
             sum -= entry.getValue();
         }
 
-        AppConfig.timestampedStandardPrint("Total node bitcake amount: "+sum+"\n");
+        AppConfig.timestampedStandardPrint("Total node bitcake amount: " +sum);
     }
 
     public void takeSomeBitcakes(int amount) { currentAmount.getAndAdd(-amount);}
@@ -190,10 +190,6 @@ public class AVBitcakeManager implements BitcakeManager {
             if(tokenVectorClock.get(tokenInitiatorId) >= senderVectorClock.get(tokenInitiatorId))
                 getHistory.compute(neighbor, new MapValueUpdater(amount));
         }
-    }
-
-    public int getRecordedAmount() {
-        return recordedAmount;
     }
 
     public Map<Integer, Integer> getTokenVectorClock() {

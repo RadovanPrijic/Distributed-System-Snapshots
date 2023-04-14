@@ -11,6 +11,7 @@ import servent.handler.snapshot.av.AVTerminateHandler;
 import servent.handler.snapshot.av.AVTokenHandler;
 import servent.message.BasicMessage;
 import servent.message.Message;
+import servent.message.MessageType;
 import servent.message.TransactionMessage;
 import servent.message.snapshot.ab.ABTellMessage;
 
@@ -104,9 +105,8 @@ public class CausalBroadcastShared {
 
                 while (iterator.hasNext()) {
                     Message pendingMessage = iterator.next();
-                    //BasicMessage messageToCheck = (BasicMessage)pendingMessage;
 
-                    if (!otherClockGreater(myVectorClock, pendingMessage.getSenderVectorClock())) {
+                    if (!otherClockGreater(myVectorClock, pendingMessage.getSenderVectorClock()) || (otherClockGreater(myVectorClock, pendingMessage.getSenderVectorClock()) && pendingMessage.getMessageType() == MessageType.AV_TERMINATE)) {
                         gotWork = true;
                         MessageHandler messageHandler = new NullHandler(pendingMessage);
 
@@ -116,7 +116,7 @@ public class CausalBroadcastShared {
                         switch (pendingMessage.getMessageType()) {
                             case TRANSACTION:
                                 if(pendingMessage.getOriginalReceiverInfo().getId() == AppConfig.myServentInfo.getId()){
-                                    System.out.println("Got message " + pendingMessage.getMessageId() + " from " + pendingMessage.getOriginalSenderInfo());
+                                    //System.out.println("Got message " + pendingMessage.getMessageId() + " from " + pendingMessage.getOriginalSenderInfo());
                                     messageHandler = new TransactionHandler(pendingMessage, snapshotCollector.getBitcakeManager());
                                 }
                                 break;
@@ -135,6 +135,7 @@ public class CausalBroadcastShared {
                                     messageHandler = new AVDoneHandler(pendingMessage, snapshotCollector);
                                 break;
                             case AV_TERMINATE:
+                                AppConfig.timestampedStandardPrint("TERMINATION BEGINNING");
                                 messageHandler = new AVTerminateHandler(pendingMessage, snapshotCollector);
                                 break;
                         }
@@ -145,6 +146,10 @@ public class CausalBroadcastShared {
                 }
             }
         }
+    }
+
+    public static Queue<Message> getPendingMessages() {
+        return pendingMessages;
     }
 
     public static void stop(){ handlerThreadPool.shutdown(); }

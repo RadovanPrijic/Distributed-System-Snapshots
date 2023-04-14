@@ -1,4 +1,6 @@
 pause 2000
 transaction_burst
 pause 58000
+info
+pause 5000
 stop

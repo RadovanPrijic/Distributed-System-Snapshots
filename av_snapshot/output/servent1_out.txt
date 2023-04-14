@@ -1,2 +1,18 @@
-11:20:36 - Starting servent [1|localhost|1200]
-11:20:36 - Pausing for 60000 ms
+15:16:14 - Starting servent [1|localhost|1200]
+15:16:14 - Pausing for 9000 ms
+15:16:23 - Pausing for 51000 ms
+15:16:24 - Committing [1|1||AV_TOKEN|1]
+15:16:24 - Committing [1|2||AV_TOKEN|1]
+15:16:29 - TERMINATION BEGINNING
+15:16:29 - Committing [1|4||AV_TERMINATE|1]
+15:16:29 - Committing [1|5||AV_TERMINATE|1]
+15:16:29 - Recorded bitcake amount: 1035
+15:16:29 - Total node bitcake amount: 1295
+15:17:14 - 54
+15:17:14 - 6
+15:17:14 - 6
+15:17:14 - 81
+15:17:14 - 54
+15:17:14 - Pending messages are empty: []
+15:17:14 - Pausing for 5000 ms
+15:17:19 - Stopping...

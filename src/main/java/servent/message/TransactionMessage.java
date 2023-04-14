@@ -49,8 +49,8 @@ public class TransactionMessage extends BasicMessage {
 				ABBitcakeManager abBitcakeManager = (ABBitcakeManager) bitcakeManager;
 				abBitcakeManager.recordGiveTransaction(getOriginalReceiverInfo().getId(), amount);
 			} else if (bitcakeManager instanceof AVBitcakeManager) {
-				//AVBitcakeManager avBitcakeManager = (AVBitcakeManager) bitcakeManager;
-				//avBitcakeManager.recordGiveTransaction(getSenderVectorClock(), getOriginalReceiverInfo().getId(), amount);
+				AVBitcakeManager avBitcakeManager = (AVBitcakeManager) bitcakeManager;
+				avBitcakeManager.recordGiveTransaction(getSenderVectorClock(), getOriginalReceiverInfo().getId(), amount);
 			}
 		}
 	}
