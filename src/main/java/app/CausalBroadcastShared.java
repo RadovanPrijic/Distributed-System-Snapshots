@@ -6,6 +6,9 @@ import servent.handler.NullHandler;
 import servent.handler.TransactionHandler;
 import servent.handler.snapshot.ab.ABTellHandler;
 import servent.handler.snapshot.ab.ABTokenHandler;
+import servent.handler.snapshot.av.AVDoneHandler;
+import servent.handler.snapshot.av.AVTerminateHandler;
+import servent.handler.snapshot.av.AVTokenHandler;
 import servent.message.BasicMessage;
 import servent.message.Message;
 import servent.message.TransactionMessage;
@@ -124,18 +127,16 @@ public class CausalBroadcastShared {
                                 if(pendingMessage.getOriginalReceiverInfo().getId() == AppConfig.myServentInfo.getId())
                                     messageHandler = new ABTellHandler(pendingMessage, snapshotCollector);
                                 break;
-                                /*
                             case AV_TOKEN:
-                                //handlerThreadPool.submit(new AVTokenHandler(pendingMessage, snapshotCollector.getBitcakeManager()));
+                                messageHandler = new AVTokenHandler(pendingMessage, snapshotCollector.getBitcakeManager(), snapshotCollector);
                                 break;
                             case AV_DONE:
-                                //if(((DoneMessage)pendingMessage).getInitiatorID() == AppConfig.myServentInfo.getId())
-                                //handlerThreadPool.submit(new AVDoneHandler(pendingMessage, snapshotCollector));
+                                if(pendingMessage.getOriginalReceiverInfo().getId() == AppConfig.myServentInfo.getId())
+                                    messageHandler = new AVDoneHandler(pendingMessage, snapshotCollector);
                                 break;
                             case AV_TERMINATE:
-                                //handlerThreadPool.submit(new AVTerminateHandler(pendingMessage, snapshotCollector));
+                                messageHandler = new AVTerminateHandler(pendingMessage, snapshotCollector);
                                 break;
-                                 */
                         }
                         handlerThreadPool.submit(messageHandler);
                         iterator.remove();

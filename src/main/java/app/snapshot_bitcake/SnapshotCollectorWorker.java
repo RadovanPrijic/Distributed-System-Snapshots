@@ -59,7 +59,6 @@ public class SnapshotCollectorWorker implements SnapshotCollector {
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
@@ -81,7 +80,7 @@ public class SnapshotCollectorWorker implements SnapshotCollector {
 					((ABBitcakeManager)bitcakeManager).tokenEvent(this);
 					break;
 				case AV:
-					//((AVBitcakeManager)bitcakeManager).tokenEvent();
+					((AVBitcakeManager)bitcakeManager).tokenEvent(this);
 				case NONE:
 					//Shouldn't be able to come here. See constructor.
 					break;
@@ -98,7 +97,7 @@ public class SnapshotCollectorWorker implements SnapshotCollector {
 					case AV:
 						if (avDoneMessages.size() == AppConfig.getServentCount() - 1) {
 							waiting = false;
-							//((AVBitcakeManager)bitcakeManager).sendTerminateMessage(this);
+							((AVBitcakeManager)bitcakeManager).terminationEvent(this);
 						}
 						break;
 					case NONE:
@@ -155,7 +154,7 @@ public class SnapshotCollectorWorker implements SnapshotCollector {
 						//Loop until it's time for termination
 					}
 					try {
-						Thread.sleep(1500);
+						Thread.sleep(2000);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -180,6 +179,7 @@ public class SnapshotCollectorWorker implements SnapshotCollector {
 		avDoneMessages.put(id, true);
 	}
 
+	@Override
 	public void initiateTermination(){
 		terminateAV = true;
 	}
@@ -197,5 +197,4 @@ public class SnapshotCollectorWorker implements SnapshotCollector {
 	public void stop() {
 		working = false;
 	}
-
 }

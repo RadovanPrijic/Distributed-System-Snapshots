@@ -1,34 +1,33 @@
-//package servent.handler.snapshot;
-//
-//import app.AppConfig;
-//import app.snapshot_bitcake.AcharyaBadrinathBitcakeManager;
-//import app.snapshot_bitcake.AlagarVenkatesanBitcakeManager;
-//import app.snapshot_bitcake.BitcakeManager;
-//import servent.handler.MessageHandler;
-//import servent.message.Message;
-//
-//
-//public class TokenHandler implements MessageHandler {
-//
-//    private Message clientMessage;
-//    private BitcakeManager bitcakeManager;
-//
-//    public TokenHandler(Message clientMessage, BitcakeManager bitcakeManager) {
-//        this.clientMessage = clientMessage;
-//        this.bitcakeManager = bitcakeManager;
-//    }
-//
-//    @Override
-//    public void run() {
-//        try{
-//            if(bitcakeManager instanceof AcharyaBadrinathBitcakeManager)
-//                ((AcharyaBadrinathBitcakeManager)bitcakeManager).sendTell(clientMessage.getOriginalSenderInfo().getId());
-//            if(bitcakeManager instanceof AlagarVenkatesanBitcakeManager)
-//                ((AlagarVenkatesanBitcakeManager)bitcakeManager).recieveToken(clientMessage.getSenderVectorClock(),clientMessage.getOriginalSenderInfo().getId());
-//        }
-//        catch (Exception e)
-//        {
-//            e.printStackTrace();
-//        }
-//    }
-//}
+package servent.handler.snapshot.av;
+
+import app.snapshot_bitcake.BitcakeManager;
+import app.snapshot_bitcake.SnapshotCollector;
+import app.snapshot_bitcake.ab.ABBitcakeManager;
+import app.snapshot_bitcake.av.AVBitcakeManager;
+import servent.handler.MessageHandler;
+import servent.message.Message;
+import servent.message.snapshot.av.AVTokenMessage;
+
+public class AVTokenHandler implements MessageHandler {
+
+    private Message clientMessage;
+    private BitcakeManager bitcakeManager;
+    private SnapshotCollector snapshotCollector;
+
+    public AVTokenHandler(Message clientMessage, BitcakeManager bitcakeManager, SnapshotCollector snapshotCollector) {
+        this.clientMessage = clientMessage;
+        this.bitcakeManager = bitcakeManager;
+        this.snapshotCollector = snapshotCollector;
+    }
+
+    @Override
+    public void run() {
+        try{
+            ((AVBitcakeManager)bitcakeManager).handleToken(clientMessage.getSenderVectorClock(), clientMessage.getOriginalSenderInfo(), snapshotCollector);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+}

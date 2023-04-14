@@ -1,12 +1,14 @@
 package app.snapshot_bitcake.ab;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ABSnapshotResult implements Serializable{
+public class ABSnapshotResult implements Serializable {
 
-    //TODO SerialVersionUID
+    @Serial
+    private static final long serialVersionUID = 3038206281101313022L;
 
     private final int serventId;
     private final int recordedAmount;

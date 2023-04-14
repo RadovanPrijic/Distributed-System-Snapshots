@@ -2,8 +2,14 @@ package app.snapshot_bitcake.av;
 
 import app.AppConfig;
 import app.CausalBroadcastShared;
+import app.ServentInfo;
 import app.snapshot_bitcake.BitcakeManager;
+import app.snapshot_bitcake.SnapshotCollector;
 import servent.message.Message;
+import servent.message.snapshot.ab.ABTokenMessage;
+import servent.message.snapshot.av.AVDoneMessage;
+import servent.message.snapshot.av.AVTerminateMessage;
+import servent.message.snapshot.av.AVTokenMessage;
 import servent.message.util.MessageUtil;
 
 import java.util.Map;
@@ -17,112 +23,140 @@ public class AVBitcakeManager implements BitcakeManager {
     private Map<Integer, Integer> getHistory = new ConcurrentHashMap<>();
     private Map<Integer, Integer> tokenVectorClock = null;
     public int recordedAmount = 0;
-    private int initiatorId;
+    public int tokenInitiatorId;
 
-    public AVBitcakeManager() {
-        for(Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
-            giveHistory.put(neighbor, 0);
-            getHistory.put(neighbor, 0);
-        }
-    }
+    public AVBitcakeManager() {}
 
-    /*
-    public void sendTerminateMessage(SnapshotCollector snapshotCollector) {
+    public void tokenEvent(SnapshotCollector snapshotCollector) {
+        Message avTokenMessageToMyself, avTokenMessageToNeighbor;
+        tokenInitiatorId = AppConfig.myServentInfo.getId();
 
-        int myId = AppConfig.myServentInfo.getId();
-        Message terminateMessage=null;
-        synchronized (CausalBroadcastShared.gatheringChannel) {
-            terminateMessage = new TerminateMessage(AppConfig.myServentInfo, null);
+        synchronized (AppConfig.paranoidLock) {
+            recordedAmount = getCurrentBitcakeAmount();
+            Map<Integer, Integer> vectorClock = new ConcurrentHashMap<>(CausalBroadcastShared.getVectorClock());
 
+            avTokenMessageToMyself = new AVTokenMessage(
+                    AppConfig.myServentInfo,
+                    AppConfig.myServentInfo,
+                    AppConfig.myServentInfo,
+                    vectorClock);
 
-            for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
-                terminateMessage = terminateMessage.changeReceiver(neighbor);
+            CausalBroadcastShared.addPendingMessage(avTokenMessageToMyself);
+            CausalBroadcastShared.checkPendingMessages(snapshotCollector);
 
-                MessageUtil.sendMessage(terminateMessage);
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            tokenVectorClock = new ConcurrentHashMap<>(CausalBroadcastShared.getVectorClock());
 
-        }
-
-        CausalBroadcastShared.addPendingMessage(terminateMessage);
-        CausalBroadcastShared.checkPendingMessages(snapshotCollector);
-    }
-
-    public void tokenEvent() {
-        Message tokenMessage=null;
-        initiatorId = AppConfig.myServentInfo.getId();
-        synchronized (CausalBroadcastShared.gatheringChannel) {
             for(Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
-                getChannel.put(neighbor, 0);
-                giveChannel.put(neighbor, 0);
+                giveHistory.put(neighbor, 0);
+                getHistory.put(neighbor, 0);
             }
-            recordedAmount =getCurrentBitcakeAmount();
-            tokenMessage = new TokenMessage(AppConfig.myServentInfo, null);
-            tokenVectorClock = tokenMessage.getSenderVectorClock();
 
             for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
-                tokenMessage = tokenMessage.changeReceiver(neighbor);
-                MessageUtil.sendMessage(tokenMessage);
+                avTokenMessageToNeighbor = new AVTokenMessage(
+                        AppConfig.myServentInfo,
+                        AppConfig.myServentInfo,
+                        AppConfig.getInfoById(neighbor),
+                        vectorClock);
+
+                CausalBroadcastShared.commitCausalMessage(avTokenMessageToNeighbor, snapshotCollector);
+                MessageUtil.sendMessage(avTokenMessageToNeighbor.changeReceiver(neighbor).makeMeASender());
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-            CausalBroadcastShared.incrementClock(initiatorId);
         }
-
     }
 
-    public void handleToken(Map<Integer, Integer> tokenVectorClock, int initiatorId){
-        Message doneMessage=null;
-        synchronized (CausalBroadcastShared.gatheringChannel) {
-            for(Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
-                getChannel.put(neighbor, 0);
-                giveChannel.put(neighbor, 0);
+    public void handleToken(Map<Integer, Integer> tokenVectorClock, ServentInfo collectorInfo, SnapshotCollector snapshotCollector){
+        Message avDoneMessage;
+        tokenInitiatorId = collectorInfo.getId();
+
+        if(collectorInfo.getId() != AppConfig.myServentInfo.getId()){
+            synchronized (AppConfig.paranoidLock) {
+                recordedAmount = getCurrentBitcakeAmount();
+                this.tokenVectorClock = tokenVectorClock;
+                Map<Integer, Integer> vectorClock = new ConcurrentHashMap<>(CausalBroadcastShared.getVectorClock());
+
+                for(Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
+                    giveHistory.put(neighbor, 0);
+                    getHistory.put(neighbor, 0);
+                }
+
+                for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
+                    avDoneMessage = new AVDoneMessage(
+                            AppConfig.myServentInfo,
+                            collectorInfo,
+                            AppConfig.getInfoById(neighbor),
+                            vectorClock);
+
+                    CausalBroadcastShared.commitCausalMessage(avDoneMessage, snapshotCollector);
+                    MessageUtil.sendMessage(avDoneMessage.changeReceiver(neighbor).makeMeASender());
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
-            this.tokenVectorClock = tokenVectorClock;
-            this.recordedAmount = getCurrentBitcakeAmount();
-            this.initiatorId = initiatorId;
-            doneMessage = new DoneMessage(AppConfig.myServentInfo,null,initiatorId);
+        }
+    }
+
+    public void terminationEvent(SnapshotCollector snapshotCollector) {
+        Message avTerminateMessageToMyself, avTerminateMessageToNeighbor;
+
+        synchronized (AppConfig.paranoidLock) {
+            Map<Integer, Integer> vectorClock = new ConcurrentHashMap<>(CausalBroadcastShared.getVectorClock());
+
+            avTerminateMessageToMyself = new AVTokenMessage(
+                    AppConfig.myServentInfo,
+                    AppConfig.myServentInfo,
+                    AppConfig.myServentInfo,
+                    vectorClock);
+
+            CausalBroadcastShared.addPendingMessage(avTerminateMessageToMyself);
+            CausalBroadcastShared.checkPendingMessages(snapshotCollector);
 
             for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
-                doneMessage = doneMessage.changeReceiver(neighbor);
-                MessageUtil.sendMessage(doneMessage);
+                avTerminateMessageToNeighbor = new AVTerminateMessage(
+                        AppConfig.myServentInfo,
+                        AppConfig.myServentInfo,
+                        AppConfig.getInfoById(neighbor),
+                        vectorClock);
+
+                CausalBroadcastShared.commitCausalMessage(avTerminateMessageToNeighbor, snapshotCollector);
+                MessageUtil.sendMessage(avTerminateMessageToNeighbor.changeReceiver(neighbor).makeMeASender());
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-            CausalBroadcastShared.incrementClock(AppConfig.myServentInfo.getId());
         }
-
     }
 
     public void handleTermination(SnapshotCollector snapshotCollector){
-        synchronized (CausalBroadcastShared.gatheringChannel) {
+        synchronized (AppConfig.paranoidLock) {
             this.tokenVectorClock = null;
         }
-        snapshotCollector.setTerminateNotArrived();
+
+        snapshotCollector.initiateTermination();
         int sum = recordedAmount;
-        AppConfig.timestampedStandardPrint("Recorded bitcake amount: "+recordedAmount);
-        for (Map.Entry<Integer, Integer> entry : getChannel.entrySet()) {
-            AppConfig.timestampedStandardPrint("Unreceived bitcake amount: "+ entry.getValue() +" from "+ entry.getKey());
+        AppConfig.timestampedStandardPrint("Recorded bitcake amount: " + sum);
+
+        for (Map.Entry<Integer, Integer> entry : getHistory.entrySet()) {
+            //AppConfig.timestampedStandardPrint("Unreceived bitcake amount: "+ entry.getValue() +" from "+ entry.getKey());
             sum+=entry.getValue();
         }
-        for (Map.Entry<Integer, Integer> entry : giveChannel.entrySet()) {
-            AppConfig.timestampedStandardPrint("Sent bitcake amount: "+ entry.getValue() +" from "+ entry.getKey());
-            sum-=entry.getValue();
+
+        for (Map.Entry<Integer, Integer> entry : giveHistory.entrySet()) {
+            //AppConfig.timestampedStandardPrint("Sent bitcake amount: "+ entry.getValue() +" from "+ entry.getKey());
+            sum -= entry.getValue();
         }
+
         AppConfig.timestampedStandardPrint("Total node bitcake amount: "+sum+"\n");
     }
-
-     */
 
     public void takeSomeBitcakes(int amount) { currentAmount.getAndAdd(-amount);}
 
@@ -144,16 +178,16 @@ public class AVBitcakeManager implements BitcakeManager {
         }
     }
 
-    public void recordGiveTransaction(int neighbor, int amount, Map<Integer, Integer> senderVectorClock) {
+    public void recordGiveTransaction(Map<Integer, Integer> senderVectorClock, int neighbor, int amount) {
         if(tokenVectorClock != null){
-            if(senderVectorClock.get(initiatorId) <= tokenVectorClock.get(initiatorId))
+            if(tokenVectorClock.get(tokenInitiatorId) >= senderVectorClock.get(tokenInitiatorId))
                 giveHistory.compute(neighbor, new MapValueUpdater(amount));
         }
     }
 
-    public void recordGetTransaction(int neighbor, int amount, Map<Integer, Integer> senderVectorClock) {
+    public void recordGetTransaction(Map<Integer, Integer> senderVectorClock, int neighbor, int amount) {
         if(tokenVectorClock != null){
-            if(senderVectorClock.get(initiatorId) <= tokenVectorClock.get(initiatorId))
+            if(tokenVectorClock.get(tokenInitiatorId) >= senderVectorClock.get(tokenInitiatorId))
                 getHistory.compute(neighbor, new MapValueUpdater(amount));
         }
     }

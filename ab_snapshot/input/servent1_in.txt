@@ -1,4 +1,4 @@
-pause 15000
+pause 9000
 bitcake_info
-pause 45000
+pause 51000
 stop

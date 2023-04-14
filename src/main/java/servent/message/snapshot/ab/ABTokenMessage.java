@@ -4,12 +4,14 @@ import app.ServentInfo;
 import servent.message.BasicMessage;
 import servent.message.MessageType;
 
+import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 
 public class ABTokenMessage extends BasicMessage {
 
-    private static final long serialVersionUID = -2718696242684977713L;
+    @Serial
+    private static final long serialVersionUID = -5282790629581336062L;
 
     public ABTokenMessage(ServentInfo originalSenderInfo,
                           ServentInfo originalReceiverInfo,

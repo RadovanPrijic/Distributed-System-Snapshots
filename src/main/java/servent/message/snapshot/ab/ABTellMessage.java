@@ -9,13 +9,15 @@ import servent.message.BasicMessage;
 import servent.message.Message;
 import servent.message.MessageType;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class ABTellMessage extends BasicMessage {
 
-    private static final long serialVersionUID = 1536279421038991652L;
+    @Serial
+    private static final long serialVersionUID = 5353500591666465357L;
     private ABSnapshotResult abSnapshotResult;
 
     public ABTellMessage(ServentInfo originalSenderInfo,
