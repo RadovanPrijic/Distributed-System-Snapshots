@@ -116,9 +116,12 @@ public class AVBitcakeManager implements BitcakeManager {
 
             CausalBroadcastShared.addPendingMessage(avTerminateMessageToMyself);
             CausalBroadcastShared.checkPendingMessages(snapshotCollector);
-            vectorClock.put(AppConfig.myServentInfo.getId(), vectorClock.get(AppConfig.myServentInfo.getId()) + 1);
+            //vectorClock.put(AppConfig.myServentInfo.getId(), vectorClock.get(AppConfig.myServentInfo.getId()) + 1);
+            AppConfig.timestampedStandardPrint("Before for, vc koji se prosledjuje: " + vectorClock);
+            AppConfig.timestampedStandardPrint("Before for, vc u causalshared: " + CausalBroadcastShared.getVectorClock());
 
             for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
+                AppConfig.timestampedStandardPrint("In for, neighbor " + neighbor + " : " + vectorClock);
                 avTerminateMessageToNeighbor = new AVTerminateMessage(
                         AppConfig.myServentInfo,
                         AppConfig.myServentInfo,

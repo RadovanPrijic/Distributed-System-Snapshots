@@ -75,7 +75,6 @@ public class CausalBroadcastShared {
         AppConfig.timestampedStandardPrint("Committing " + newMessage);
         commitedCausalMessageList.add(newMessage);
         incrementClock(newMessage.getOriginalSenderInfo().getId());
-
         checkPendingMessages(snapshotCollector);
     }
 
@@ -106,12 +105,32 @@ public class CausalBroadcastShared {
                 while (iterator.hasNext()) {
                     Message pendingMessage = iterator.next();
 
-                    if (!otherClockGreater(myVectorClock, pendingMessage.getSenderVectorClock()) || (otherClockGreater(myVectorClock, pendingMessage.getSenderVectorClock()) && pendingMessage.getMessageType() == MessageType.AV_TERMINATE)) {
+                    if(pendingMessage.getMessageType() == MessageType.AV_TERMINATE){
+                        AppConfig.timestampedStandardPrint("My vector clock: " + myVectorClock + " and other vector clock " +
+                                pendingMessage.getSenderVectorClock());
+                        for(int i = 0; i < myVectorClock.size(); i++) {
+                            if (pendingMessage.getSenderVectorClock().get(i) > myVectorClock.get(i)) {
+                                AppConfig.timestampedStandardPrint(i + " -> true");
+                            } else
+                                AppConfig.timestampedStandardPrint(i + " -> false");
+                        }
+                    }
+
+                    if (!otherClockGreater(myVectorClock, pendingMessage.getSenderVectorClock()) /*|| (otherClockGreater(myVectorClock, pendingMessage.getSenderVectorClock()) && pendingMessage.getMessageType() == MessageType.AV_TERMINATE)*/) {
                         gotWork = true;
                         MessageHandler messageHandler = new NullHandler(pendingMessage);
 
+                        if(AppConfig.myServentInfo.getId() == 1 && pendingMessage.getMessageType() != MessageType.TRANSACTION){
+                            AppConfig.timestampedStandardPrint("Poruka je " + pendingMessage.toString());
+                            AppConfig.timestampedStandardPrint("Vector clock je " + pendingMessage.getSenderVectorClock());
+                        }
+
                         commitedCausalMessageList.add(pendingMessage);
-                        incrementClock(pendingMessage.getOriginalSenderInfo().getId());
+
+                        if((pendingMessage.getMessageType() != MessageType.AV_TERMINATE && pendingMessage.getMessageType() != MessageType.AV_TOKEN)||
+                                (pendingMessage.getMessageType() == MessageType.AV_TERMINATE && AppConfig.myServentInfo.getId() != pendingMessage.getOriginalSenderInfo().getId()) ||
+                                (pendingMessage.getMessageType() == MessageType.AV_TOKEN && AppConfig.myServentInfo.getId() != pendingMessage.getOriginalSenderInfo().getId()))
+                            incrementClock(pendingMessage.getOriginalSenderInfo().getId());
 
                         switch (pendingMessage.getMessageType()) {
                             case TRANSACTION:
