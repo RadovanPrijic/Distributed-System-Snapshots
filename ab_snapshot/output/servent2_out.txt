@@ -25,3 +25,4 @@ Got message 42 from [4|localhost|1500]
 Got message 43 from [4|localhost|1500]
 Got message 46 from [4|localhost|1500]
 Got message 47 from [4|localhost|1500]
+11:25:13 - Stopping...

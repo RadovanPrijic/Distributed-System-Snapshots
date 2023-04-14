@@ -50,3 +50,4 @@
 11:24:13 - Committing [4|47|1|TRANSACTION|2]
 11:24:13 - Committing [4|48|4|TRANSACTION|3]
 11:24:13 - Committing [4|49|8|TRANSACTION|3]
+11:25:13 - Stopping...

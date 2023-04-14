@@ -101,3 +101,4 @@ Got message 49 from [4|localhost|1500]
 11:24:18 - Committing [3|72|9|TRANSACTION|1]
 11:24:18 - Committing [3|73|8|TRANSACTION|2]
 11:24:18 - Committing [3|74|2|TRANSACTION|4]
+11:25:13 - Stopping...
