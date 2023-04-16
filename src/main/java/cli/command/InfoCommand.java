@@ -15,19 +15,13 @@ public class InfoCommand implements CLICommand {
 
 	@Override
 	public void execute(String args) {
-//		AppConfig.timestampedStandardPrint("My info: " + AppConfig.myServentInfo);
-//		AppConfig.timestampedStandardPrint("Neighbors:");
-//		String neighbors = "";
-//		for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
-//			neighbors += neighbor + " ";
-//		}
-//		AppConfig.timestampedStandardPrint(neighbors);
-//
-		Map<Integer,Integer> vectorclock = new HashMap<>(CausalBroadcastShared.getVectorClock());
-		for (Map.Entry<Integer, Integer> entry1 : vectorclock.entrySet()) {
-			AppConfig.timestampedStandardPrint(String.valueOf(entry1.getValue()));
+		AppConfig.timestampedStandardPrint("My info: " + AppConfig.myServentInfo);
+		AppConfig.timestampedStandardPrint("Neighbors:");
+		String neighbors = "";
+		for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
+			neighbors += neighbor + " ";
 		}
-		AppConfig.timestampedStandardPrint("Pending messages are empty: "+ CausalBroadcastShared.getPendingMessages());
+		AppConfig.timestampedStandardPrint(neighbors);
 	}
 
 }

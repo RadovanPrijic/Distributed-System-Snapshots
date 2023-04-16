@@ -63,6 +63,24 @@ public class BasicMessage implements Message {
 		this.messageText = messageText;
 		this.messageId = messageCounter.getAndIncrement();
 	}
+
+	protected BasicMessage(MessageType type,
+						   ServentInfo originalSenderInfo,
+						   ServentInfo originalReceiverInfo,
+						   ServentInfo receiverInfo,
+						   Map<Integer, Integer> senderVectorClock,
+						   List<ServentInfo> routeList,
+						   String messageText,
+						   int messageId) {
+		this.type = type;
+		this.originalSenderInfo = originalSenderInfo;
+		this.originalReceiverInfo = originalReceiverInfo;
+		this.receiverInfo = receiverInfo;
+		this.routeList = routeList;
+		this.senderVectorClock = senderVectorClock;
+		this.messageText = messageText;
+		this.messageId = messageId;
+	}
 	
 	@Override
 	public MessageType getMessageType() {
@@ -103,25 +121,7 @@ public class BasicMessage implements Message {
 	public int getMessageId() {
 		return messageId;
 	}
-	
-	protected BasicMessage(MessageType type,
-						   ServentInfo originalSenderInfo,
-						   ServentInfo originalReceiverInfo,
-						   ServentInfo receiverInfo,
-						   Map<Integer, Integer> senderVectorClock,
-						   List<ServentInfo> routeList,
-						   String messageText,
-						   int messageId) {
-		this.type = type;
-		this.originalSenderInfo = originalSenderInfo;
-		this.originalReceiverInfo = originalReceiverInfo;
-		this.receiverInfo = receiverInfo;
-		this.routeList = routeList;
-		this.senderVectorClock = senderVectorClock;
-		this.messageText = messageText;
-		this.messageId = messageId;
-	}
-	
+
 	/**
 	 * Used when resending a message. It will not change the original owner
 	 * (so equality is not affected), but will add us to the route list, so

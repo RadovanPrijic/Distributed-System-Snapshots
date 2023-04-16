@@ -116,12 +116,8 @@ public class AVBitcakeManager implements BitcakeManager {
 
             CausalBroadcastShared.addPendingMessage(avTerminateMessageToMyself);
             CausalBroadcastShared.checkPendingMessages(snapshotCollector);
-            //vectorClock.put(AppConfig.myServentInfo.getId(), vectorClock.get(AppConfig.myServentInfo.getId()) + 1);
-            AppConfig.timestampedStandardPrint("Before for, vc koji se prosledjuje: " + vectorClock);
-            AppConfig.timestampedStandardPrint("Before for, vc u causalshared: " + CausalBroadcastShared.getVectorClock());
 
             for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
-                AppConfig.timestampedStandardPrint("In for, neighbor " + neighbor + " : " + vectorClock);
                 avTerminateMessageToNeighbor = new AVTerminateMessage(
                         AppConfig.myServentInfo,
                         AppConfig.myServentInfo,
@@ -145,20 +141,17 @@ public class AVBitcakeManager implements BitcakeManager {
         }
 
         snapshotCollector.initiateTermination();
+
         int sum = recordedAmount;
-        AppConfig.timestampedStandardPrint("Recorded bitcake amount: " + sum);
+        AppConfig.timestampedStandardPrint("Recorded node bitcake amount: " + sum + "\n");
 
         for (Map.Entry<Integer, Integer> entry : getHistory.entrySet()) {
-            //AppConfig.timestampedStandardPrint("Unreceived bitcake amount: "+ entry.getValue() +" from "+ entry.getKey());
-            sum+=entry.getValue();
+            AppConfig.timestampedStandardPrint("Channel " + AppConfig.myServentInfo.getId() + " <--- " + entry.getKey() + " :");
+            AppConfig.timestampedStandardPrint("Unreceived bitcake amount: " + entry.getValue() + " from " + entry.getKey());
+            sum += entry.getValue();
         }
 
-        for (Map.Entry<Integer, Integer> entry : giveHistory.entrySet()) {
-            //AppConfig.timestampedStandardPrint("Sent bitcake amount: "+ entry.getValue() +" from "+ entry.getKey());
-            sum -= entry.getValue();
-        }
-
-        AppConfig.timestampedStandardPrint("Total node bitcake amount: " +sum);
+        AppConfig.timestampedStandardPrint("Final node bitcake amount: " + sum);
     }
 
     public void takeSomeBitcakes(int amount) { currentAmount.getAndAdd(-amount);}
@@ -181,13 +174,6 @@ public class AVBitcakeManager implements BitcakeManager {
         }
     }
 
-    public void recordGiveTransaction(Map<Integer, Integer> senderVectorClock, int neighbor, int amount) {
-        if(tokenVectorClock != null){
-            if(tokenVectorClock.get(tokenInitiatorId) >= senderVectorClock.get(tokenInitiatorId))
-                giveHistory.compute(neighbor, new MapValueUpdater(amount));
-        }
-    }
-
     public void recordGetTransaction(Map<Integer, Integer> senderVectorClock, int neighbor, int amount) {
         if(tokenVectorClock != null){
             if(tokenVectorClock.get(tokenInitiatorId) >= senderVectorClock.get(tokenInitiatorId))
@@ -195,7 +181,4 @@ public class AVBitcakeManager implements BitcakeManager {
         }
     }
 
-    public Map<Integer, Integer> getTokenVectorClock() {
-        return tokenVectorClock;
-    }
 }

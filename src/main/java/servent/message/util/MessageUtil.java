@@ -34,7 +34,6 @@ public class MessageUtil {
 	public static final boolean MESSAGE_UTIL_PRINTING = false;
 
 	public static Message readMessage(Socket socket) {
-		
 		Message clientMessage = null;
 			
 		try {
@@ -48,9 +47,8 @@ public class MessageUtil {
 			e.printStackTrace();
 		}
 		
-		if (MESSAGE_UTIL_PRINTING) {
+		if (MESSAGE_UTIL_PRINTING)
 			AppConfig.timestampedStandardPrint("Got message " + clientMessage);
-		}
 				
 		return clientMessage;
 	}
@@ -59,4 +57,5 @@ public class MessageUtil {
 		Thread delayedSender = new Thread(new DelayedMessageSender(message));
 		delayedSender.start();
 	}
+
 }

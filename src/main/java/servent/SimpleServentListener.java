@@ -22,16 +22,10 @@ import servent.message.util.MessageUtil;
 public class SimpleServentListener implements Runnable, Cancellable {
 
 	private volatile boolean working = true;
-	
 	private SnapshotCollector snapshotCollector;
-
 	public SimpleServentListener(SnapshotCollector snapshotCollector) {
 		this.snapshotCollector = snapshotCollector;
 	}
-
-	/*
-	 * Thread pool for executing the handlers. Each client will get it's own handler thread.
-	 */
 	private final ExecutorService threadPool = Executors.newWorkStealingPool();
 	
 	@Override
@@ -54,6 +48,7 @@ public class SimpleServentListener implements Runnable, Cancellable {
 				Message clientMessage = MessageUtil.readMessage(clientSocket);
 				MessageHandler messageHandler = new CausalityHandler(clientMessage, snapshotCollector);
 				threadPool.submit(messageHandler);
+
 			} catch (SocketTimeoutException timeoutEx) {
 				//Uncomment the next line to see that we are waking up every second.
 //				AppConfig.timedStandardPrint("Waiting...");

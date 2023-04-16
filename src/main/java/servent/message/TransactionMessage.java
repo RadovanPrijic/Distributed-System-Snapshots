@@ -1,14 +1,9 @@
 package servent.message;
 
-import app.AppConfig;
-import app.CausalBroadcastShared;
 import app.ServentInfo;
 import app.snapshot_bitcake.BitcakeManager;
 import app.snapshot_bitcake.ab.ABBitcakeManager;
-import app.snapshot_bitcake.av.AVBitcakeManager;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,10 +43,8 @@ public class TransactionMessage extends BasicMessage {
 			if (bitcakeManager instanceof ABBitcakeManager) {
 				ABBitcakeManager abBitcakeManager = (ABBitcakeManager) bitcakeManager;
 				abBitcakeManager.recordGiveTransaction(getOriginalReceiverInfo().getId(), amount);
-			} else if (bitcakeManager instanceof AVBitcakeManager) {
-				AVBitcakeManager avBitcakeManager = (AVBitcakeManager) bitcakeManager;
-				avBitcakeManager.recordGiveTransaction(getSenderVectorClock(), getOriginalReceiverInfo().getId(), amount);
 			}
 		}
 	}
+
 }

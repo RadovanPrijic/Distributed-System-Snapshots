@@ -6,7 +6,4 @@ package servent.handler;
  * @author bmilojkovic
  *
  */
-public interface MessageHandler extends Runnable {
-
-	
-}
+public interface MessageHandler extends Runnable {}

@@ -1,83 +1,66 @@
-18:14:28 - Starting servent [0|localhost|1100]
-18:14:28 - Pausing for 2000 ms
-18:14:30 - Pausing for 58000 ms
-18:14:30 - Committing [0|0|5|TRANSACTION|1]
-18:14:30 - Committing [0|1|10|TRANSACTION|1]
-18:14:30 - Committing [0|2|3|TRANSACTION|2]
-18:14:30 - Committing [0|3|2|TRANSACTION|1]
-18:14:30 - Committing [0|4|10|TRANSACTION|2]
-18:14:30 - Committing [0|5|4|TRANSACTION|2]
-18:14:30 - Committing [0|6|2|TRANSACTION|1]
-18:14:30 - Committing [0|7|1|TRANSACTION|1]
-18:14:30 - Committing [0|8|9|TRANSACTION|2]
-18:14:30 - Committing [0|9|5|TRANSACTION|1]
-18:14:30 - Committing [0|10|2|TRANSACTION|1]
-18:14:30 - Committing [0|11|1|TRANSACTION|1]
-18:14:30 - Committing [0|12|2|TRANSACTION|2]
-18:14:30 - Committing [0|13|3|TRANSACTION|2]
-18:14:30 - Committing [0|14|6|TRANSACTION|2]
-18:14:30 - Committing [0|15|2|TRANSACTION|1]
-18:14:30 - Committing [0|16|2|TRANSACTION|2]
-18:14:30 - Committing [0|17|3|TRANSACTION|1]
-18:14:30 - Committing [0|18|4|TRANSACTION|2]
-18:14:30 - Committing [0|19|6|TRANSACTION|1]
-18:14:30 - Committing [0|20|9|TRANSACTION|1]
-18:14:30 - Committing [0|21|8|TRANSACTION|1]
-18:14:30 - Committing [0|22|7|TRANSACTION|2]
-18:14:30 - Committing [0|23|7|TRANSACTION|2]
-18:14:30 - Committing [0|24|2|TRANSACTION|1]
-18:14:30 - Committing [0|25|3|TRANSACTION|2]
-18:14:30 - Committing [0|26|8|TRANSACTION|2]
-18:14:30 - Committing [0|27|7|TRANSACTION|1]
-18:14:30 - Committing [0|28|10|TRANSACTION|1]
-18:14:30 - Committing [0|29|4|TRANSACTION|2]
-18:14:30 - Committing [0|30|1|TRANSACTION|2]
-18:14:30 - Committing [0|31|9|TRANSACTION|2]
-18:14:30 - Committing [0|32|6|TRANSACTION|1]
-18:14:30 - Committing [0|33|7|TRANSACTION|1]
-18:14:30 - Committing [0|34|4|TRANSACTION|2]
-18:14:30 - Committing [0|35|5|TRANSACTION|1]
-18:14:30 - Committing [0|36|3|TRANSACTION|1]
-18:14:30 - Committing [0|37|1|TRANSACTION|1]
-18:14:30 - Committing [0|38|7|TRANSACTION|2]
-18:14:30 - Committing [0|39|3|TRANSACTION|2]
-18:14:30 - Committing [0|40|6|TRANSACTION|1]
-18:14:30 - Committing [0|41|8|TRANSACTION|2]
-18:14:30 - Committing [0|42|5|TRANSACTION|2]
-18:14:30 - Committing [0|43|6|TRANSACTION|2]
-18:14:30 - Committing [0|44|7|TRANSACTION|1]
-18:14:30 - Committing [0|45|1|TRANSACTION|2]
-18:14:30 - Committing [0|46|9|TRANSACTION|1]
-18:14:30 - Committing [0|47|2|TRANSACTION|2]
-18:14:30 - Committing [0|48|7|TRANSACTION|1]
-18:14:30 - Committing [0|49|10|TRANSACTION|2]
-18:14:38 - Committing [0|50||AV_DONE|1]
-18:14:39 - Committing [0|51||AV_DONE|1]
-18:14:41 - Committing [0|52||AV_DONE|1]
-18:14:41 - Committing [0|53||AV_DONE|1]
-18:14:44 - My vector clock: {0=54, 1=2, 2=2, 3=80, 4=53} and other vector clock {0=53, 1=2, 2=2, 3=77, 4=51}
-18:14:44 - 0 -> false
-18:14:44 - 1 -> false
-18:14:44 - 2 -> false
-18:14:44 - 3 -> false
-18:14:44 - 4 -> false
-18:14:44 - TERMINATION BEGINNING
-18:14:44 - Recorded bitcake amount: 746
-18:14:44 - Total node bitcake amount: 746
-18:14:47 - My vector clock: {0=54, 1=3, 2=6, 3=81, 4=54} and other vector clock {0=53, 1=2, 2=2, 3=77, 4=51}
-18:14:47 - 0 -> false
-18:14:47 - 1 -> false
-18:14:47 - 2 -> false
-18:14:47 - 3 -> false
-18:14:47 - 4 -> false
-18:14:47 - TERMINATION BEGINNING
-18:14:47 - Recorded bitcake amount: 746
-18:14:47 - Total node bitcake amount: 746
-18:15:28 - 54
-18:15:28 - 4
-18:15:28 - 6
-18:15:28 - 81
-18:15:28 - 54
-18:15:28 - Pending messages are empty: []
-18:15:28 - Pausing for 5000 ms
-18:15:33 - Stopping...
+09:52:43 - Starting servent [0|localhost|1100]
+09:52:43 - Pausing for 3000 ms
+09:52:46 - Pausing for 22000 ms
+09:52:46 - Committing [0|0|6|TRANSACTION|1]
+09:52:46 - Committing [0|1|7|TRANSACTION|1]
+09:52:46 - Committing [0|2|8|TRANSACTION|1]
+09:52:46 - Committing [0|3|5|TRANSACTION|2]
+09:52:46 - Committing [0|4|4|TRANSACTION|1]
+09:52:46 - Committing [0|5|8|TRANSACTION|2]
+09:52:46 - Committing [0|6|10|TRANSACTION|1]
+09:52:46 - Committing [0|7|4|TRANSACTION|1]
+09:52:46 - Committing [0|8|9|TRANSACTION|2]
+09:52:46 - Committing [0|9|7|TRANSACTION|2]
+09:52:46 - Committing [0|10|10|TRANSACTION|1]
+09:52:46 - Committing [0|11|9|TRANSACTION|1]
+09:52:46 - Committing [0|12|5|TRANSACTION|2]
+09:52:46 - Committing [0|13|2|TRANSACTION|1]
+09:52:46 - Committing [0|14|3|TRANSACTION|2]
+09:52:46 - Committing [0|15|5|TRANSACTION|1]
+09:52:46 - Committing [0|16|2|TRANSACTION|2]
+09:52:46 - Committing [0|17|4|TRANSACTION|2]
+09:52:46 - Committing [0|18|9|TRANSACTION|1]
+09:52:46 - Committing [0|19|10|TRANSACTION|1]
+09:52:46 - Committing [0|20|2|TRANSACTION|2]
+09:52:46 - Committing [0|21|1|TRANSACTION|2]
+09:52:46 - Committing [0|22|4|TRANSACTION|1]
+09:52:46 - Committing [0|23|9|TRANSACTION|1]
+09:52:46 - Committing [0|24|3|TRANSACTION|2]
+09:52:46 - Committing [0|25|8|TRANSACTION|1]
+09:52:46 - Committing [0|26|10|TRANSACTION|2]
+09:52:46 - Committing [0|27|1|TRANSACTION|1]
+09:52:46 - Committing [0|28|5|TRANSACTION|2]
+09:52:46 - Committing [0|29|7|TRANSACTION|2]
+09:52:46 - Committing [0|30|2|TRANSACTION|1]
+09:52:46 - Committing [0|31|9|TRANSACTION|2]
+09:52:46 - Committing [0|32|8|TRANSACTION|2]
+09:52:46 - Committing [0|33|5|TRANSACTION|1]
+09:52:46 - Committing [0|34|2|TRANSACTION|2]
+09:52:46 - Committing [0|35|1|TRANSACTION|1]
+09:52:46 - Committing [0|36|10|TRANSACTION|2]
+09:52:46 - Committing [0|37|7|TRANSACTION|1]
+09:52:46 - Committing [0|38|5|TRANSACTION|2]
+09:52:46 - Committing [0|39|4|TRANSACTION|1]
+09:52:46 - Committing [0|40|6|TRANSACTION|2]
+09:52:46 - Committing [0|41|2|TRANSACTION|1]
+09:52:46 - Committing [0|42|6|TRANSACTION|2]
+09:52:46 - Committing [0|43|8|TRANSACTION|2]
+09:52:46 - Committing [0|44|6|TRANSACTION|1]
+09:52:46 - Committing [0|45|5|TRANSACTION|1]
+09:52:46 - Committing [0|46|3|TRANSACTION|2]
+09:52:46 - Committing [0|47|10|TRANSACTION|2]
+09:52:46 - Committing [0|48|9|TRANSACTION|1]
+09:52:46 - Committing [0|49|5|TRANSACTION|2]
+09:52:53 - Committing [0|50||AV_DONE|1]
+09:52:53 - Committing [0|51||AV_DONE|1]
+09:52:55 - Committing [0|52||AV_DONE|1]
+09:52:55 - Committing [0|53||AV_DONE|1]
+09:52:59 - Beginning with termination ...
+09:52:59 - Recorded node bitcake amount: 710
+
+09:52:59 - Channel 0 <--- 1 :
+09:52:59 - Unreceived bitcake amount: 0 from 1
+09:52:59 - Channel 0 <--- 2 :
+09:52:59 - Unreceived bitcake amount: 0 from 2
+09:52:59 - Final node bitcake amount: 710
+09:53:08 - Stopping...

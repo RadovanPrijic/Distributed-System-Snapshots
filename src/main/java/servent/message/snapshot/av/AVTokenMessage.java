@@ -19,15 +19,4 @@ public class AVTokenMessage extends BasicMessage {
                           Map<Integer, Integer> vectorClock) {
         super(MessageType.AV_TOKEN, originalSenderInfo, originalReceiverInfo, receiverInfo, vectorClock);
     }
-
-    public AVTokenMessage(MessageType type,
-                          ServentInfo originalSenderInfo,
-                          ServentInfo originalReceiverInfo,
-                          ServentInfo receiverInfo,
-                          Map<Integer, Integer> senderVectorClock,
-                          List<ServentInfo> routeList,
-                          String messageText,
-                          int messageId) {
-        super(MessageType.AV_TOKEN, originalSenderInfo, originalReceiverInfo, receiverInfo, senderVectorClock, routeList,  messageText, messageId);
-    }
 }

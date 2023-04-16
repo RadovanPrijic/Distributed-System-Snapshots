@@ -21,6 +21,7 @@ public class ABSnapshotResult implements Serializable {
         this.giveHistory = new ConcurrentHashMap<>(giveHistory);
         this.getHistory = new ConcurrentHashMap<>(getHistory);
     }
+
     public int getServentId() {
         return serventId;
     }

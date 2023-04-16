@@ -145,9 +145,8 @@ public class SnapshotCollectorWorker implements SnapshotCollector {
 							}
 						}
 					}
-
 					AppConfig.timestampedStandardPrint("System bitcake count: " + sum);
-					collectedABValues.clear(); //reset for next invocation
+					collectedABValues.clear();
 					break;
 				case AV:
 					while(!terminateAV){

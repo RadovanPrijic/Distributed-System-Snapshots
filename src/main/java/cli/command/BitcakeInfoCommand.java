@@ -18,7 +18,6 @@ public class BitcakeInfoCommand implements CLICommand {
 	@Override
 	public void execute(String args) {
 		collector.startCollecting();
-
 	}
 
 }

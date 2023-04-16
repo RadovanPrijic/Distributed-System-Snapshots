@@ -2,8 +2,6 @@ package app.snapshot_bitcake;
 
 import app.Cancellable;
 import app.snapshot_bitcake.ab.ABSnapshotResult;
-import app.snapshot_bitcake.cl.CLSnapshotResult;
-import app.snapshot_bitcake.ly.LYSnapshotResult;
 
 import java.util.Map;
 

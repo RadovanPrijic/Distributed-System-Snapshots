@@ -19,15 +19,4 @@ public class ABTokenMessage extends BasicMessage {
                           Map<Integer, Integer> vectorClock) {
         super(MessageType.AB_TOKEN, originalSenderInfo, originalReceiverInfo, receiverInfo, vectorClock);
     }
-
-    public ABTokenMessage(MessageType type,
-                          ServentInfo originalSenderInfo,
-                          ServentInfo originalReceiverInfo,
-                          ServentInfo receiverInfo,
-                          Map<Integer, Integer> senderVectorClock,
-                          List<ServentInfo> routeList,
-                          String messageText,
-                          int messageId) {
-        super(MessageType.AB_TOKEN, originalSenderInfo, originalReceiverInfo, receiverInfo, senderVectorClock, routeList,  messageText, messageId);
-    }
 }

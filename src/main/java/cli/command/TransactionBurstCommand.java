@@ -31,8 +31,6 @@ public class TransactionBurstCommand implements CLICommand {
 		
 		@Override
 		public void run() {
-			//Map<Integer, Integer> myClock = new ConcurrentHashMap<>(CausalBroadcastShared.getVectorClock());
-
 			for (int i = 0; i < TRANSACTION_COUNT; i++) {
 				for (int neighbor : AppConfig.myServentInfo.getNeighbors()) {
 					ServentInfo neighborInfo = AppConfig.getInfoById(neighbor);
@@ -43,11 +41,11 @@ public class TransactionBurstCommand implements CLICommand {
 					synchronized (AppConfig.paranoidLock) {
 					Map<Integer, Integer> vectorClock = new ConcurrentHashMap<>(CausalBroadcastShared.getVectorClock());
 					transactionMessage = new TransactionMessage(AppConfig.myServentInfo, neighborInfo, null, amount, bitcakeManager, vectorClock);
-					transactionMessage.sendEffect();
 					CausalBroadcastShared.commitCausalMessage(transactionMessage, snapshotCollector);
 					}
 
 					MessageUtil.sendMessage(transactionMessage.changeReceiver(neighbor).makeMeASender());
+					transactionMessage.sendEffect();
 				}
 			}
 		}
@@ -67,5 +65,4 @@ public class TransactionBurstCommand implements CLICommand {
 		}
 	}
 
-	
 }
