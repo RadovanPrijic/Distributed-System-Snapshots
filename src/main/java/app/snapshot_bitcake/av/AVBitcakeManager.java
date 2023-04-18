@@ -46,7 +46,6 @@ public class AVBitcakeManager implements BitcakeManager {
             tokenVectorClock = new ConcurrentHashMap<>(CausalBroadcastShared.getVectorClock());
 
             for(Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
-                giveHistory.put(neighbor, 0);
                 getHistory.put(neighbor, 0);
             }
 
@@ -79,7 +78,6 @@ public class AVBitcakeManager implements BitcakeManager {
                 Map<Integer, Integer> vectorClock = new ConcurrentHashMap<>(CausalBroadcastShared.getVectorClock());
 
                 for(Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
-                    giveHistory.put(neighbor, 0);
                     getHistory.put(neighbor, 0);
                 }
 
