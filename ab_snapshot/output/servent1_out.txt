@@ -1,17 +1,16 @@
-09:46:53 - Starting servent [1|localhost|1200]
-09:46:53 - Pausing for 7000 ms
-09:47:01 - Pausing for 13000 ms
-09:47:02 - Committing [1|1||AB_TOKEN|1]
-09:47:03 - Committing [1|2||AB_TOKEN|1]
-09:47:12 - Recorded bitcake amount for 0 = 873
-09:47:12 - Recorded bitcake amount for 1 = 1013
-09:47:12 - Recorded bitcake amount for 2 = 1168
-09:47:12 - Recorded bitcake amount for 3 = 741
-09:47:12 - Recorded bitcake amount for 4 = 578
-09:47:12 - Unreceived bitcake amount: 120 from servent 0 to servent 1
-09:47:12 - Unreceived bitcake amount: 95 from servent 0 to servent 2
-09:47:12 - Unreceived bitcake amount: 116 from servent 3 to servent 1
-09:47:12 - Unreceived bitcake amount: 152 from servent 3 to servent 2
-09:47:12 - Unreceived bitcake amount: 144 from servent 3 to servent 4
-09:47:12 - System bitcake count: 5000
-09:47:14 - Stopping...
+09:55:59 - Starting servent [1|localhost|1200]
+09:55:59 - Pausing for 7000 ms
+09:56:06 - Pausing for 18000 ms
+09:56:08 - Committing [1|1||AB_TOKEN|1]
+09:56:08 - Committing [1|2||AB_TOKEN|1]
+09:56:15 - Recorded bitcake amount for 0 = 729
+09:56:15 - Recorded bitcake amount for 1 = 1022
+09:56:15 - Recorded bitcake amount for 2 = 1293
+09:56:15 - Recorded bitcake amount for 3 = 706
+09:56:15 - Recorded bitcake amount for 4 = 724
+09:56:15 - Unreceived bitcake amount: 108 from servent 0 to servent 1
+09:56:15 - Unreceived bitcake amount: 146 from servent 3 to servent 1
+09:56:15 - Unreceived bitcake amount: 137 from servent 3 to servent 2
+09:56:15 - Unreceived bitcake amount: 135 from servent 3 to servent 4
+09:56:15 - System bitcake count: 5000
+09:56:24 - Stopping...

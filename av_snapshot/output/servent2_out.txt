@@ -1,19 +1,19 @@
-09:52:43 - Starting servent [2|localhost|1300]
-09:52:43 - Pausing for 25000 ms
-09:52:54 - Committing [2|0||AV_DONE|1]
-09:52:54 - Committing [2|1||AV_DONE|1]
-09:52:54 - Committing [2|2||AV_DONE|1]
-09:52:54 - Committing [2|3||AV_DONE|1]
-09:52:55 - Committing [2|4||AV_DONE|1]
-09:52:55 - Committing [2|5||AV_DONE|1]
-09:53:00 - Beginning with termination ...
-09:53:00 - Recorded node bitcake amount: 1279
+09:51:30 - Starting servent [2|localhost|1300]
+09:51:30 - Pausing for 25000 ms
+09:51:43 - Committing [2|0||AV_DONE|1]
+09:51:43 - Committing [2|1||AV_DONE|1]
+09:51:43 - Committing [2|2||AV_DONE|1]
+09:51:44 - Committing [2|3||AV_DONE|1]
+09:51:44 - Committing [2|4||AV_DONE|1]
+09:51:44 - Committing [2|5||AV_DONE|1]
+09:51:48 - Beginning with termination ...
+09:51:48 - Recorded node bitcake amount: 1279
 
-09:53:00 - Channel 2 <--- 0 :
-09:53:00 - Unreceived bitcake amount: 0 from 0
-09:53:00 - Channel 2 <--- 3 :
-09:53:00 - Unreceived bitcake amount: 153 from 3
-09:53:00 - Channel 2 <--- 4 :
-09:53:00 - Unreceived bitcake amount: 0 from 4
-09:53:00 - Final node bitcake amount: 1432
-09:53:08 - Stopping...
+09:51:48 - Channel 2 <--- 0 :
+09:51:48 - Unreceived bitcake amount: 0 from 0
+09:51:48 - Channel 2 <--- 3 :
+09:51:48 - Unreceived bitcake amount: 128 from 3
+09:51:48 - Channel 2 <--- 4 :
+09:51:48 - Unreceived bitcake amount: 0 from 4
+09:51:48 - Final node bitcake amount: 1407
+09:51:55 - Stopping...

@@ -1,9 +1,9 @@
-09:46:53 - Starting servent [2|localhost|1300]
-09:46:53 - Pausing for 20000 ms
-09:47:06 - Committing [2|0||AB_TELL|1]
-09:47:06 - Committing [2|1||AB_TELL|1]
-09:47:06 - Committing [2|2||AB_TELL|1]
-09:47:06 - Committing [2|3||AB_TELL|1]
-09:47:06 - Committing [2|4||AB_TELL|1]
-09:47:06 - Committing [2|5||AB_TELL|1]
-09:47:13 - Stopping...
+09:55:58 - Starting servent [2|localhost|1300]
+09:55:59 - Pausing for 25000 ms
+09:56:10 - Committing [2|0||AB_TELL|1]
+09:56:11 - Committing [2|1||AB_TELL|1]
+09:56:11 - Committing [2|2||AB_TELL|1]
+09:56:11 - Committing [2|3||AB_TELL|1]
+09:56:11 - Committing [2|4||AB_TELL|1]
+09:56:12 - Committing [2|5||AB_TELL|1]
+09:56:24 - Stopping...
