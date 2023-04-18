@@ -141,7 +141,7 @@ public class AVBitcakeManager implements BitcakeManager {
         snapshotCollector.initiateTermination();
 
         int sum = recordedAmount;
-        AppConfig.timestampedStandardPrint("Recorded node bitcake amount: " + sum + "\n");
+        AppConfig.timestampedStandardPrint("\nRecorded node bitcake amount: " + sum);
 
         for (Map.Entry<Integer, Integer> entry : getHistory.entrySet()) {
             AppConfig.timestampedStandardPrint("Channel " + AppConfig.myServentInfo.getId() + " <--- " + entry.getKey() + " :");
