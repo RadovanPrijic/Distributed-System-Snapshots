@@ -15,7 +15,6 @@ public class CausalityHandler implements MessageHandler {
     private Message clientMessage;
     private static Set<Message> receivedBroadcasts = Collections.newSetFromMap(new ConcurrentHashMap<Message, Boolean>());
     private SnapshotCollector snapshotCollector;
-    private Object pendingMessagesLock = new Object();
 
     public CausalityHandler(Message clientMessage, SnapshotCollector snapshotCollector) {
         this.clientMessage = clientMessage;
